@@ -2,7 +2,7 @@ import axios from 'axios';
 import React from 'react';
 import { Redirect } from 'react-router';
 import { Logout } from './logout';
-import { Dashboard } from './dashboard';{}
+import { Sidebar } from './sidebar';{}
 
 export class Welcome extends React.Component{
 	constructor(props){
@@ -43,7 +43,7 @@ export class Welcome extends React.Component{
 			/* Welcome page should set the grid layout and then every component individually should be implemented, like Projects, Comments, Assigned_Cards, and the Dashboard then to be decided at the end*/ 
 			// <h3>Welcome {this.state.user['username']}</h3>
 			return <>
-			<Dashboard {...this.props}/>
+			<Sidebar {...this.props} user={this.state.user}/>
 			<Logout handleLogout={this.successfulLogout}/>
 			</>;
 		} else {
