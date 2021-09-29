@@ -3,6 +3,9 @@ import React from 'react'
 import {Login} from "./TestComponents/login";
 import {Welcome} from "./TestComponents/welcome";
 import {Omniport} from "./TestComponents/omniport";
+import {ListProject} from "./TestComponents/listproject"
+
+
 import axios from 'axios';
 import {
 	BrowserRouter as Router,
@@ -23,10 +26,13 @@ export default class App extends React.Component{
       <Router>
           <h1>Trello App</h1>
           <Route exact path = "/" render = {(props) =>{
-            return !this.state.loggedin ? <Login {...props} loginStatus = {this.state.loggedin} checkLoginStatus={this.checkLoginStatus}/> : <Redirect to="/login/success"/>
+            return !this.state.loggedin ? <Login {...props} loginStatus = {this.state.loggedin} checkLoginStatus={this.checkLoginStatus}/> : <Redirect to="/dashboard"/>
           }}/>
-          <Route exact path="/login/success" render = {(props) =>{
+          <Route exact path="/dashboard" render = {(props) =>{
             return this.state.loggedin ? <Welcome {...props} loginStatus = {this.state.loggedin} checkLoginStatus={this.checkLoginStatus}/> : <Redirect to="/"/>
+          }}/>
+          <Route exact path="/project/:id" render = {(props) =>{
+            return <ListProject {...props} loginStatus = {this.state.loggedin} checkLoginStatus={this.checkLoginStatus}/> 
           }}/>
           <Route exact path="/omniport" render={props=>{
               return <Omniport {...props} />
@@ -55,3 +61,5 @@ export default class App extends React.Component{
     });
   }
 }
+// How to give dynamic path in router
+// how to go to the path if loggedin after refresh

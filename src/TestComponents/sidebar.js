@@ -1,26 +1,17 @@
 import React from 'react'
-import {UtilTemplates} from './utility/util_templates'
 import { ToggleSwitch } from './utility/toggleSwitch';
+import { ProjectTemplate } from './projectTemplate';
+
 export class Sidebar extends React.Component{
     constructor(props){
         super(props);
+        this.state = {activeItem: {}}
     }
     render(){
         return (<>
         <ToggleSwitch name="Projects">
-            <UtilTemplates name = "projects" attribute={this.props.user["projects_of_user"]}/>
+            <ProjectTemplate {...this.props} projects={this.props.user["projects_of_user"]}/>
         </ToggleSwitch>
-        <ToggleSwitch name="Cards">
-            <UtilTemplates name = "cards" attribute={this.props.user["assigned_cards"]}/>
-        </ToggleSwitch>
-        <ToggleSwitch name="Comments">
-            <UtilTemplates name = "comments" attribute={this.props.user["comments_of_user"]}/>
-        </ToggleSwitch>
-            
-            
-            
-            
-            
             </>);
     }
 }

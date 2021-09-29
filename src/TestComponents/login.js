@@ -1,22 +1,31 @@
 import React, { useEffect } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-export const Login = (props) => {
-	const submit = (e) => {
-		e.preventDefault();
-	};
-	const style = {
-		display: 'flex',
-		flexDirection: 'column',
-		alignItems: 'center',
-		justifyContent: 'center'
-	};
-	const redirect = () => {
+
+
+export class Login extends React.Component{
+	constructor(props){
+		super(props);
+	}
+	componentDidMount(){
+		this.props.checkLoginStatus();
+		if(this.props.loginStatus){
+			console.log("Came inside login," ,this.props.history)
+			this.props.history.goBack();
+		}
+	}
+	redirect = () => {
 		window.location.href = "https://channeli.in/oauth/authorise?client_id=9iXxR2JLU4HyfCi1umE5nDKTyjbpicWrFFUQPWAV&redirect_uri=http://127.0.0.1:3000/omniport";
 	};
-	useEffect(()=>{
-		props.checkLoginStatus();
-	});
-	if (!props.loginStatus) {
+	render(){
+		const style = {
+			display: 'flex',
+			flexDirection: 'column',
+			alignItems: 'center',
+			justifyContent: 'center'
+		};
+		const submit = (e) => {
+			e.preventDefault();
+		};
 		return (
 			<div style={style}>
 				<h2>Login to Trello</h2>
@@ -27,11 +36,8 @@ export const Login = (props) => {
 					<input type="password" name="passwd" id="passwd" />
 					<button type="submit">Log In</button>
 				</form>
-				<Link onClick={redirect}>Authorize</Link>
+				<Link onClick={this.redirect}>Authorize</Link>
 			</div>
 		);
 	}
-	else{
-		return <Redirect to="/login/success"/>
-	}
-};
+}
