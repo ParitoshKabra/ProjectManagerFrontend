@@ -32,7 +32,7 @@ export const Omniport = (props)=>{
         console.log(isAuth)
     }, [isAuth])
     return !isAuth ? <p>Authenticating with omniport..</p> : <Redirect to="/" />
-    
+    // Encourage loading ui
     
 }
 // ssh with github

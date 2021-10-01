@@ -8,6 +8,7 @@ export class Login extends React.Component{
 	}
 	componentDidMount(){
 		this.props.checkLoginStatus();
+		this.props.getUser();
 		if(this.props.loginStatus){
 			console.log("Came inside login," ,this.props.history)
 			this.props.history.goBack();

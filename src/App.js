@@ -1,65 +1,155 @@
 import './App.css';
-import React from 'react'
-import {Login} from "./TestComponents/login";
-import {Welcome} from "./TestComponents/welcome";
-import {Omniport} from "./TestComponents/omniport";
-import {ListProject} from "./TestComponents/listproject"
-
-
+import React from 'react';
+import { Login } from './TestComponents/login';
+import { Welcome } from './TestComponents/welcome';
+import { Omniport } from './TestComponents/omniport';
+import { ListProject } from './TestComponents/listproject';
+import { CreateCard } from './TestComponents/CreateCard';
+import CreateProject from './TestComponents/CreateProject';
+import { createTheme, ThemeProvider } from '@mui/material';
 import axios from 'axios';
-import {
-	BrowserRouter as Router,
-	Switch,
-	Route,
-  Redirect
-  } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 
-export default class App extends React.Component{
-  constructor(props){
-    super(props);
-    this.state = {loggedin:false}
+const theme = createTheme({
+	palette: {
+		primary: {
+			main: '#4def5a'
+		}
+	}
+});
 
-    this.checkLoginStatus = this.checkLoginStatus.bind(this);
-  }
-  render(){
-    return (
-      <Router>
-          <h1>Trello App</h1>
-          <Route exact path = "/" render = {(props) =>{
-            return !this.state.loggedin ? <Login {...props} loginStatus = {this.state.loggedin} checkLoginStatus={this.checkLoginStatus}/> : <Redirect to="/dashboard"/>
-          }}/>
-          <Route exact path="/dashboard" render = {(props) =>{
-            return this.state.loggedin ? <Welcome {...props} loginStatus = {this.state.loggedin} checkLoginStatus={this.checkLoginStatus}/> : <Redirect to="/"/>
-          }}/>
-          <Route exact path="/project/:id" render = {(props) =>{
-            return <ListProject {...props} loginStatus = {this.state.loggedin} checkLoginStatus={this.checkLoginStatus}/> 
-          }}/>
-          <Route exact path="/omniport" render={props=>{
-              return <Omniport {...props} />
-            }}/>
-      </Router>
-    );
-  }
-  componentDidMount(){
-    console.log("DidMount called")
-    this.checkLoginStatus();
-  }
-  checkLoginStatus = ()=>{
-    axios
-    .get("http://127.0.0.1:8000/trelloAPIs/check_login", {withCredentials:true})
-    .then(response =>{
-      console.log(response)
-      if(response.data.loggedin === true && this.state.loggedin === false){
-          this.setState({loggedin:true});
-      }
-      else if(this.state.loggedin === true && response.data.loggedin === false){
-        this.setState({loggedin:false});
-      }
-    })
-    .catch(error =>{
-      console.log("checking error...", error);
-    });
-  }
+const axiosInstance = axios.create({
+	baseURL: 'http://127.0.0.1:8000/trelloAPIs/',
+	timeout: 5000,
+	headers: {
+		'Content-Type': 'application/json'
+		// 'Accept': 'application/json'
+	}
+});
+axiosInstance.defaults.withCredentials = true;
+axiosInstance.defaults.xsrfCookieName = 'csrftoken';
+axiosInstance.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+
+export default class App extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = { loggedin: false, user:{} };
+
+		this.checkLoginStatus = this.checkLoginStatus.bind(this);
+		this.getUser = this.getUser.bind(this);
+	}
+	//once the user is logged in sidebar should be there with every component
+	render() {
+		return (
+			<ThemeProvider theme={theme}>
+				<Router>
+					<h1>Trello App</h1>
+					<Route
+						exact
+						path="/"
+						render={(props) => {
+							return !this.state.loggedin ? (
+								<Login
+									{...props}
+									loginStatus={this.state.loggedin}
+									checkLoginStatus={this.checkLoginStatus}
+									user={this.state.user}
+									getUser={this.getUser}
+								/>
+							) : (
+								<Redirect to="/dashboard" />
+							);
+						}}
+					/>
+					<Route
+						exact
+						path="/dashboard"
+						render={(props) => {
+							return (
+								<Welcome
+									{...props}
+									loginStatus={this.state.loggedin}
+									checkLoginStatus={this.checkLoginStatus}
+									user={this.state.user}
+									getUser={this.getUser}
+								/>
+							);
+						}}
+					/>
+					<Route
+						exact
+						path="/project/:id"
+						render={(props) => {
+							return (
+								<ListProject
+									{...props}
+									loginStatus={this.state.loggedin}
+									checkLoginStatus={this.checkLoginStatus}
+									user={this.state.user}
+									getUser={this.getUser}
+									axiosInstance={axiosInstance}
+								/>
+							);
+						}}
+					/>
+					<Route
+						exact
+						path="/omniport"
+						render={(props) => {
+							return <Omniport {...props}  user={this.state.user} getUser={this.getUser}/>;
+						}}
+					/>
+					<Route
+						exact
+						path="/createCard/:id/:projectid"
+						render={(props) => {
+							return <CreateCard {...props} user={this.state.user} axiosInstance={axiosInstance} loginStatus={this.state.loggedin} getUser={this.getUser}/>;
+						}}
+					/>
+					<Route
+						exact
+						path="/createProject"
+						render={(props) => {
+							return <CreateProject {...props} user={this.state.user} axiosInstance={axiosInstance} loginStatus={this.state.loggedin} getUser={this.getUser}/>;
+						}}
+					/>
+				</Router>
+			</ThemeProvider>
+		);
+	}
+	componentDidMount() {
+		console.log('DidMount called');
+		this.checkLoginStatus();
+		this.getUser();
+	}
+	checkLoginStatus = () => {
+		axios
+			.get('http://127.0.0.1:8000/trelloAPIs/check_login', { withCredentials: true })
+			.then((response) => {
+				console.log(response);
+				if (response.data.loggedin === true && this.state.loggedin === false) {
+					this.setState({ loggedin: true });
+				} else if (this.state.loggedin === true && response.data.loggedin === false) {
+					this.setState({ loggedin: false });
+				}
+			})
+			.catch((error) => {
+				console.log('checking error...', error);
+			});
+	};
+	getUser = () =>{
+		axios
+		.get('http://127.0.0.1:8000/trelloAPIs/user', {withCredentials: true})
+		.then(res=>{
+			console.log("user data", res.data[0]);
+			this.setState({user: res.data[0]});
+		})
+		.catch(error=>{
+			console.log(error);
+		})
+	}
 }
 // How to give dynamic path in router
 // how to go to the path if loggedin after refresh
+// Main Components : Modify/Delete request on cards, lists

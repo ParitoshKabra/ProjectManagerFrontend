@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
 import { Redirect } from 'react-router';
+import CreateList from './CreateList';
 import axios from 'axios';
 import {MyList} from './list'
 
+// Main Component
 export class ListProject extends React.Component {
 	constructor(props) {
 		super(props);
@@ -11,6 +13,7 @@ export class ListProject extends React.Component {
 	}
 	componentDidMount() {
 		this.props.checkLoginStatus();
+		this.props.getUser();
 		this.renderLists();
 	}
 	renderLists() {
@@ -33,12 +36,14 @@ export class ListProject extends React.Component {
                 console.log("content");
                 console.log(this.state.projectContent);
                 return (
-                    <div>
+                    <div style={{display: "flex"}}>
                         <p>Project Number {this.state.projectContent.id}</p>
                         {this.state.projectContent["project_lists"].map((list) => {
                         return <MyList {...this.props} list={list} key={list.id} />;
                     })}
+						<CreateList {...this.props} project={this.state.projectContent} renderLists={this.renderLists}></CreateList>
                     </div>
+
                 );
             }
             else{
