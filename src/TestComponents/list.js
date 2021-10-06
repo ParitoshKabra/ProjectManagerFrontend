@@ -7,7 +7,6 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import { makeStyles } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/Add';
-<<<<<<< HEAD
 import { ButtonGroup } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ListItemText } from '@material-ui/core';
@@ -27,27 +26,15 @@ const useStyles = makeStyles({
 		overflow: 'auto',
 		border: '2px solid red'
 	}
-=======
-
-
-const useStyles = makeStyles({
-    btn: {
-        fontSize: "16px",
-		border: "50%"
-    }
->>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 });
 
 export const MyList = (props) => {
 	const classes = useStyles();
 	const [ listContent, setlistContent ] = useState({});
-<<<<<<< HEAD
 	const [ editCard, setEditCard ] = useState(false);
 	const [cardUnderEdit, setCardUnderEdit] = useState({});
 	const [open, setOpen] = useState(false);
 
-=======
->>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 	const getList = () => {
 		axios
 			.get('http://127.0.0.1:8000/trelloAPIs/lists/' + props.list.id, { withCredentials: true })
@@ -60,7 +47,6 @@ export const MyList = (props) => {
 				console.log(error);
 			});
 	};
-<<<<<<< HEAD
 	const deleteList = () => {
 		setOpen(false);
 		props.axiosInstance
@@ -93,19 +79,12 @@ export const MyList = (props) => {
 		setEditCard(false);
 		props.renderLists();
 	};
-=======
-	useEffect(() => {
-		getList();
-	}, []);
-
->>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 	if (listContent) {
 		console.log(listContent['list_cards']);
 		let cards;
 		if (listContent['list_cards']) {
 			cards = listContent.list_cards.map((card) => {
 				return (
-<<<<<<< HEAD
 					<ListItem>
 						<ListItemText primary={card.title} />
 						<ButtonGroup key={card.id}>
@@ -123,19 +102,12 @@ export const MyList = (props) => {
 							/>
 						</ButtonGroup>
 					</ListItem>
-=======
-					<Button variant="outlined" color="secondary" key={card.id} endIcon={<EditRoundedIcon/>} >
-						{card.title}
-					</Button>
-
->>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 				);
 			});
 		} else {
 			cards = 'Loading cards...';
 		}
 		return (
-<<<<<<< HEAD
 			<Stack spacing={2} className={classes.conatainer}>
 				<Typography variant="h6" gutterBottom align="center">
 					{listContent.title}
@@ -190,17 +162,6 @@ export const MyList = (props) => {
 					</Button>
 				</DialogActions>
 			</Dialog>
-=======
-			<Stack spacing={2} maxWidth="148px" width="148px" border="2px solid red">
-				<Typography variant="h6" gutterBottom align="center">{listContent.title}</Typography>
-				<Stack spacing={1.2}>{cards}</Stack>
-
-				<Button color="primary" variant="outlined" className={classes.btn} onClick={()=>{
-					props.history.push("/createCard/"+props.list.id+"/"+props.list.lists_project)
-				}}>
-					<AddCircleIcon />
-				</Button>
->>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 			</Stack>
 		);
 	} else {
