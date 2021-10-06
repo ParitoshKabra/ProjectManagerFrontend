@@ -31,11 +31,7 @@ export const Omniport = (props)=>{
     useEffect(()=>{
         console.log(isAuth)
     }, [isAuth])
-<<<<<<< HEAD
     return !isAuth ? <p>Authenticating with omniport..</p> : <Redirect to="/dashboard" />
-=======
-    return !isAuth ? <p>Authenticating with omniport..</p> : <Redirect to="/" />
->>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
     // Encourage loading ui
     
 }
