@@ -9,6 +9,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { AlertTitle } from '@mui/material';
 import { Button } from '@mui/material';
 import Cookies from 'universal-cookie';
+<<<<<<< HEAD
 import { Redirect } from 'react-router';
 const ariaLabel = { 'aria-label': 'description' };
 const cookies = new Cookies();
@@ -18,6 +19,17 @@ const MyAlert = ({ TitleMsg, TitleDetail, disableAlertState , setTitleMsg, setTi
 		const timeout = setTimeout(() => {
 			disableAlertState();
 		}, 2000);
+=======
+
+const ariaLabel = { 'aria-label': 'description' };
+const cookies = new Cookies();
+
+const MyAlert = ({ TitleMsg, TitleDetail, disableAlertState }) => {
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			disableAlertState();
+		}, 5000);
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 		return () => {
 			clearTimeout(timeout);
 		};
@@ -62,10 +74,16 @@ const MyAlert = ({ TitleMsg, TitleDetail, disableAlertState , setTitleMsg, setTi
 function CreateList(props) {
 	const [ title, setTitle ] = useState('');
 	const [ submit, setSubmit ] = useState(false);
+<<<<<<< HEAD
 	const [ TitleMsg, setTitleMsg ] = useState('error');
 	const [ TitleDetail, setTitleDetail ] = useState('');
 	const [ showAlert, setShowAlert ] = useState(false);
 	const [created, setCreated] = useState(false);
+=======
+	const [ TitleMsg, setTitleMsg ] = useState('none');
+	const [ TitleDetail, setTitleDetail ] = useState('');
+	const [ showAlert, setShowAlert ] = useState(false);
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 
 	useEffect(
 		() => {
@@ -73,7 +91,10 @@ function CreateList(props) {
 		},
 		[ submit ]
 	);
+<<<<<<< HEAD
 	
+=======
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 	const disableAlertState = () => {
 		setShowAlert(false);
 	};
@@ -81,6 +102,7 @@ function CreateList(props) {
 		e.preventDefault();
 		setSubmit(false);
 		console.log(TitleMsg);
+<<<<<<< HEAD
 		let array = props.project['project_lists'].map(item=>item.title);
 		
 		if(array.indexOf(title) === -1){
@@ -90,6 +112,9 @@ function CreateList(props) {
 			console.log("came herere");
 		}
 		if (TitleMsg === 'success' && !created) {
+=======
+		if (TitleMsg === 'success') {
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 			const data = {
 				title: title,
 				lists_project: props.project.id
@@ -109,21 +134,34 @@ function CreateList(props) {
 					// redirect user to omniport to authenticate again
 					setShowAlert(true);
 					setSubmit(true);
+<<<<<<< HEAD
 					setCreated(true);
+=======
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 				})
 				.catch((error) => {
 					console.log(error);
 				});
 		} else {
+<<<<<<< HEAD
 			console.log('error in title', created, TitleMsg);
       		setShowAlert(true);
+=======
+			console.log('error in title');
+      setShowAlert(true);
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 		}
 	};
 	const handleCreateList = (e) => {
 		setTitleMsg('success');
+<<<<<<< HEAD
 		setCreated(false);
 		setTitleDetail('List created successfully!');
     	setShowAlert(false);
+=======
+		setTitleDetail('List created successfully!');
+    setShowAlert(false);
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 		console.log(e.target.value);
 		setTitle(e.target.value);
 		let title_proxy = e.target.value;
@@ -138,8 +176,12 @@ function CreateList(props) {
 			setTitleDetail('title cannot be empty');
 		}
 	};
+<<<<<<< HEAD
 	if(props.loginStatus){
 		return (
+=======
+	return (
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 		<Box
 			component="form"
 			sx={{
@@ -162,6 +204,7 @@ function CreateList(props) {
 				<AddTaskIcon />
 			</IconButton>
       {showAlert && (
+<<<<<<< HEAD
 				<MyAlert TitleMsg={TitleMsg} TitleDetail={TitleDetail} disableAlertState={disableAlertState} setTitleDetail={setTitleDetail} setTitleMsg={setTitleMsg} />
 			)}
 			
@@ -176,6 +219,13 @@ function CreateList(props) {
 			return <p>Checking login status....</p>
 		}
 	}
+=======
+				<MyAlert TitleMsg={TitleMsg} TitleDetail={TitleDetail} disableAlertState={disableAlertState} />
+			)}
+		</Box>
+    
+	);
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 }
 
 export default CreateList;

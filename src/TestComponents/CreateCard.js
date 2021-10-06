@@ -9,6 +9,7 @@ import { Box } from '@mui/material';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { OutlinedInput } from '@mui/material';
+<<<<<<< HEAD
 import Cookies from 'universal-cookie';
 import { useHistory } from 'react-router';
 import { ButtonGroup } from '@mui/material';
@@ -17,6 +18,12 @@ import { DialogTitle, DialogActions, Dialog, DialogContent, DialogContentText } 
 import { Alert } from '@mui/material';
 import { Redirect } from 'react-router-dom';
 const cookies = new Cookies();
+=======
+import Cookies from 'universal-cookie'
+import { useHistory } from 'react-router';
+
+const cookies = new Cookies()
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 
 // import AdapterDateFns from '@mui/lab/AdapterDateFns';
 // import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -31,11 +38,16 @@ const MenuProps = {
 	}
 };
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 export const CreateCard = (props) => {
 	// const [card, setcard] = useState({"card_list"})
 	const [ title, setTitle ] = useState('');
 	const [ errorTitle, setErrorTitle ] = useState(false);
 	const [ errormsg, setErrorMsg ] = useState('');
+<<<<<<< HEAD
 	const [ alertMsg, setAlertMsg ] = useState('');
 	const [ alert, setAlert ] = useState(false);
 	const [ descp, setDescp ] = useState('none');
@@ -57,11 +69,22 @@ export const CreateCard = (props) => {
 			setDateTime(props.card['due_date']);
 		}
 	};
+=======
+	const [ descp, setDescp ] = useState('');
+	const [ datetime, setDateTime ] = useState(new Date());
+	const [ assigned_to, setAssigned_to ] = useState([]);
+	const [ assigned_toU, setAssigned_toU ] = useState([]);
+	const [ members, setMembers ] = useState({});
+	// created_by, list
+	const [ errorassign, setErrorAssign ] = useState(false);
+	const history = useHistory();
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 	const handleCreateCard = async (e) => {
 		setErrorTitle(false);
 		setErrorMsg('');
 		let title_proxy = e.target.value;
 		// console.log(title, descp);
+<<<<<<< HEAD
 		let list_id;
 		if (props.edit) {
 			list_id = props.card['cards_list'];
@@ -73,26 +96,43 @@ export const CreateCard = (props) => {
 			.get('http://127.0.0.1:8000/trelloAPIs/lists/' + list_id, { withCredentials: true })
 			.then((response) => {
 				console.log('titles in lists', response.data);
+=======
+
+		const res = await axios
+			.get('http://127.0.0.1:8000/trelloAPIs/lists/' + props.match.params.id, { withCredentials: true })
+			.then((response) => {
+				console.log(response.data);
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 				return response.data;
 			})
 			.catch((error) => {
 				console.log(error);
 				return error;
 			});
+<<<<<<< HEAD
 		if (title_proxy === '') {
+=======
+		if(title_proxy === ''){
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 			setErrorTitle(true);
 		}
 		res.list_cards.forEach((item) => {
 			if (title_proxy === item.title) {
+<<<<<<< HEAD
 				if (!props.edit || title_proxy !== props.card.title) {
 					setErrorMsg('Choose a different title');
 					setErrorTitle(true);
 				}
+=======
+				setErrorMsg('Choose a different title');
+				setErrorTitle(true);
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 			}
 		});
 	};
 
 	const getMembers = async () => {
+<<<<<<< HEAD
 		console.log(props.edit, props);
 		let projectid;
 		if (props.edit) {
@@ -108,6 +148,14 @@ export const CreateCard = (props) => {
 			})
 			.then((response) => {
 				console.log('members', response.data);
+=======
+		const res = await axios
+			.get('http://127.0.0.1:8000/trelloAPIs/project_members/' + props.match.params.projectid, {
+				withCredentials: true
+			})
+			.then((response) => {
+				console.log(response.data);
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 				return response.data;
 			})
 			.catch((error) => {
@@ -119,6 +167,7 @@ export const CreateCard = (props) => {
 	};
 
 	useEffect(() => {
+<<<<<<< HEAD
 		if (!props.loginStatus) {
 			props.history.push('/');
 		}
@@ -128,6 +177,17 @@ export const CreateCard = (props) => {
 		props.getUser();
 	}, []);
 
+=======
+		if(!props.loginStatus){
+			props.history.push("/");
+		}
+		getMembers();
+		props.getUser();
+		
+	}, []);
+	
+	useEffect(() => {}, []);
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 	// const fetchUsername = (array) => {
 	// 	let usernames = [];
 	// 	for (let i = 0; i < array.length; i++) {
@@ -157,6 +217,7 @@ export const CreateCard = (props) => {
 			<MenuItem>Val - 4</MenuItem>
 		];
 	}
+<<<<<<< HEAD
 	const deleteCard = (e) => {
 		handleClose();
 		props.handleClose();
@@ -172,11 +233,17 @@ export const CreateCard = (props) => {
 				setAlertMsg(error);
 			});
 	};
+=======
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 	const handleSelectChange = (event) => {
 		console.log(event.target.value);
 		console.log(assigned_toU, assigned_to);
 		setErrorAssign(false);
+<<<<<<< HEAD
 		if (event.target.value.length === 0) {
+=======
+		if(event.target.value.length === 0){
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 			setErrorAssign(true);
 		}
 		setAssigned_to(event.target.value);
@@ -192,7 +259,11 @@ export const CreateCard = (props) => {
 	};
 	const handleSubmit = (e) => {
 		e.preventDefault();
+<<<<<<< HEAD
 
+=======
+		
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 		if (title === '') {
 			setErrorMsg('Required');
 			setErrorTitle(true);
@@ -201,8 +272,13 @@ export const CreateCard = (props) => {
 			setErrorAssign(true);
 		}
 		if (!errorassign && !errorTitle) {
+<<<<<<< HEAD
 			console.log(props);
 			let data = {
+=======
+			console.log(props)
+			const data = {
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 				cards_list: props.match.params.id,
 				created_by: props.user.id,
 				assigned_to: assigned_to,
@@ -210,6 +286,7 @@ export const CreateCard = (props) => {
 				descp: descp,
 				due_date: datetime
 			};
+<<<<<<< HEAD
 
 			console.log(cookies.get('csrftoken'));
 			if (!props.edit) {
@@ -257,6 +334,28 @@ export const CreateCard = (props) => {
 		setOpen(false);
 	}
 	if(props.loginStatus){
+=======
+			console.log(data);
+			console.log(cookies.get("csrftoken"))
+			props.axiosInstance
+				.post('http://127.0.0.1:8000/trelloAPIs/cards/', data, {
+					headers: {
+					  'X-CSRFToken':  cookies.get("csrftoken"),
+					  'Content-Type': 'application/json',
+					  'X-Requested-With': 'XMLHttpRequest'
+					}
+				  })
+				.then((response) => {
+					console.log(response.data);
+					history.goBack();
+					
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		}
+	};
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 	return (
 		<Box
 			component="form"
@@ -276,7 +375,10 @@ export const CreateCard = (props) => {
 				InputLabelProps={{
 					shrink: true
 				}}
+<<<<<<< HEAD
 				value={title}
+=======
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 				onChange={(e) => {
 					setTitle(e.target.value);
 					handleCreateCard(e);
@@ -292,7 +394,10 @@ export const CreateCard = (props) => {
 				InputLabelProps={{
 					shrink: true
 				}}
+<<<<<<< HEAD
 				value={descp}
+=======
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 				multiline
 				onChange={(e) => setDescp(e.target.value)}
 				rows={4}
@@ -304,7 +409,10 @@ export const CreateCard = (props) => {
 				InputLabelProps={{
 					shrink: true
 				}}
+<<<<<<< HEAD
 				value={datetime}
+=======
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 				variant="outlined"
 				color="secondary"
 				sx={{ width: 250 }}
@@ -325,6 +433,7 @@ export const CreateCard = (props) => {
 			>
 				{choices}
 			</Select>
+<<<<<<< HEAD
 			<ButtonGroup>
 				<Button variant="contained" color="secondary" type="submit" onClick={handleSubmit}>
 					{props.edit ? 'Update' : 'Submit'}
@@ -367,4 +476,11 @@ export const CreateCard = (props) => {
 					return <p>Checking login status ....</p>
 				}
 			}
+=======
+			<Button variant="contained" color="secondary" type="submit" onClick={handleSubmit}>
+				Submit
+			</Button>
+		</Box>
+	);
+>>>>>>> e8a6a70312667255803e9b7390bd405d21002f41
 };
