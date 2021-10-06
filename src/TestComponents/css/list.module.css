@@ -1,0 +1,12 @@
+.listContainer {
+    background-color: aliceblue;
+    display: flex;
+    flex-direction: column;
+    color: red;
+    width: 17rem;
+}
+
+.listCards {
+    display: flex;
+    flex-direction: column;
+}
