@@ -13,7 +13,7 @@ import Cookies from 'universal-cookie';
 const ariaLabel = { 'aria-label': 'description' };
 const cookies = new Cookies();
 
-const MyAlert = ({ TitleMsg, TitleDetail, disableAlertState }) => {
+export const MyAlert = ({ TitleMsg, TitleDetail, disableAlertState }) => {
 	useEffect(() => {
 		const timeout = setTimeout(() => {
 			disableAlertState();
@@ -22,7 +22,7 @@ const MyAlert = ({ TitleMsg, TitleDetail, disableAlertState }) => {
 			clearTimeout(timeout);
 		};
 	}, []);
-	const [ open, setOpen ] = useState(true);
+	const [open, setOpen] = useState(true);
 	return (
 		<Box sx={{ width: '100%' }}>
 			<Collapse in={open}>
@@ -60,20 +60,20 @@ const MyAlert = ({ TitleMsg, TitleDetail, disableAlertState }) => {
 };
 
 function CreateList(props) {
-	const [ title, setTitle ] = useState('');
-	const [ submit, setSubmit ] = useState(false);
-	const [ TitleMsg, setTitleMsg ] = useState('error');
-	const [ TitleDetail, setTitleDetail ] = useState('');
-	const [ showAlert, setShowAlert ] = useState(false);
+	const [title, setTitle] = useState('');
+	const [submit, setSubmit] = useState(false);
+	const [TitleMsg, setTitleMsg] = useState('error');
+	const [TitleDetail, setTitleDetail] = useState('');
+	const [showAlert, setShowAlert] = useState(false);
 	const [created, setCreated] = useState(false);
 
 	useEffect(
 		() => {
 			props.renderLists();
 		},
-		[ submit ]
+		[submit]
 	);
-	
+
 	const disableAlertState = () => {
 		setShowAlert(false);
 	};
@@ -109,14 +109,14 @@ function CreateList(props) {
 				});
 		} else {
 			console.log('error in title');
-      		setShowAlert(true);
+			setShowAlert(true);
 		}
 	};
 	const handleCreateList = (e) => {
 		setTitleMsg('success');
 		setCreated(false);
 		setTitleDetail('List created successfully!');
-    	setShowAlert(false);
+		setShowAlert(false);
 		console.log(e.target.value);
 		setTitle(e.target.value);
 		let title_proxy = e.target.value;
@@ -140,7 +140,7 @@ function CreateList(props) {
 			noValidate
 			autoComplete="off"
 		>
-			
+
 			<Input placeholder="Add a new list" inputProps={ariaLabel} onChange={handleCreateList} value={title} />
 			<IconButton
 				color="primary"
@@ -153,12 +153,12 @@ function CreateList(props) {
 			>
 				<AddTaskIcon />
 			</IconButton>
-      {showAlert && (
-				<MyAlert TitleMsg={TitleMsg} TitleDetail={TitleDetail} disableAlertState={disableAlertState} handleCreateList={handleCreateList}/>
+			{showAlert && (
+				<MyAlert TitleMsg={TitleMsg} TitleDetail={TitleDetail} disableAlertState={disableAlertState} handleCreateList={handleCreateList} />
 			)}
-			
+
 		</Box>
-    
+
 	);
 }
 

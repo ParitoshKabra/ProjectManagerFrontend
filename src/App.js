@@ -3,7 +3,7 @@ import React from 'react';
 import { Login } from './TestComponents/login';
 import { Welcome } from './TestComponents/welcome';
 import { Omniport } from './TestComponents/omniport';
-import  ListProject  from './TestComponents/listproject';
+import ListProject from './TestComponents/listproject';
 import { CreateCard } from './TestComponents/CreateCard';
 import CreateProject from './TestComponents/CreateProject';
 import { createTheme, ThemeProvider } from '@mui/material';
@@ -64,7 +64,7 @@ export default class App extends React.Component {
 								}}
 							/>
 						</Grid>
-						<Grid item sm={9} sx={{maxHeight:"100%", overflow:"auto"}}>
+						<Grid item sm={9} sx={{ maxHeight: "100%", overflow: "auto" }}>
 							<Route
 								exact
 								path="/"
@@ -148,6 +148,8 @@ export default class App extends React.Component {
 											loginStatus={this.state.loggedin}
 											getUser={this.getUser}
 											done={this.state.done}
+											edit={false}
+											project={undefined}
 										/>
 									);
 								}}

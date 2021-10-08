@@ -77,7 +77,7 @@ export const Sidebar = (props) => {
 	const getActiveProjectOnRefresh = (id) => {
 		console.log('I was called!!', id)
 		axios
-			.get('http://127.0.0.1:8000/trelloAPIs/projects/' + id, { withCredentials: true })
+			.get('http://127.0.0.1:8000/trelloAPIs/projects/' + parseInt(id), { withCredentials: true })
 			.then((response) => {
 				console.log("I was called in sidebar");
 				setactiveItem(response.data);

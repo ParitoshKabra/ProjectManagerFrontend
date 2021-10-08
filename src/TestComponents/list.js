@@ -25,22 +25,22 @@ const useStyles = makeStyles({
 		maxHeight: '300px',
 		overflow: 'auto',
 		border: '2px solid red',
-		padding : "15px",
-		borderRadius : "10px",
+		padding: "15px",
+		borderRadius: "10px",
 		alignItems: "center"
 	},
-	card :{
+	card: {
 		backgroundColor: "#f50057",
 		padding: "8px 4px",
 		borderRadius: "10px",
-		"&:hover":{
+		"&:hover": {
 			opacity: 0.8,
 
 		},
-		
+
 	},
 	buttonGroup: {
-		"&.MuiButtonGroup-root":{
+		"&.MuiButtonGroup-root": {
 			marginTop: "auto"
 		}
 	}
@@ -49,8 +49,8 @@ const useStyles = makeStyles({
 
 export const MyList = (props) => {
 	const classes = useStyles();
-	const [ listContent, setlistContent ] = useState({});
-	const [ editCard, setEditCard ] = useState(false);
+	const [listContent, setlistContent] = useState({});
+	const [editCard, setEditCard] = useState(false);
 	const [cardUnderEdit, setCardUnderEdit] = useState({});
 	const [open, setOpen] = useState(false);
 
@@ -80,11 +80,11 @@ export const MyList = (props) => {
 				console.log(error);
 			});
 	}
-	
+
 	useEffect(() => {
 		getList();
 	}, []);
-	useEffect(() =>{
+	useEffect(() => {
 		getList();
 	}, [editCard])
 
@@ -92,8 +92,8 @@ export const MyList = (props) => {
 		setEditCard(true);
 		setCardUnderEdit(card);
 	};
-	const ViewCard = () => {};
-	
+	const ViewCard = () => { };
+
 	const handleClose = () => {
 		setEditCard(false);
 		props.renderLists();
@@ -109,7 +109,7 @@ export const MyList = (props) => {
 						<ButtonGroup key={card.id}>
 							<Button
 								variant="outlined"
-								onClick={(e) =>{EditCard(card);}}
+								onClick={(e) => { EditCard(card); }}
 								color="secondary"
 								startIcon={<EditRoundedIcon />}
 							/>
@@ -131,7 +131,7 @@ export const MyList = (props) => {
 				<Typography variant="h6" gutterBottom align="center">
 					{listContent.title}
 				</Typography>
-				<Stack spacing={1.2} sx={{width:"100%"}}>{cards}</Stack>
+				<Stack spacing={1.2} sx={{ width: "100%" }}>{cards}</Stack>
 
 				<ButtonGroup className={classes.buttonGroup}>
 					<Button
@@ -159,28 +159,28 @@ export const MyList = (props) => {
 					<DialogTitle>Edit Card</DialogTitle>
 					<DialogContent>
 						<CreateCard {...props} edit={editCard} card={cardUnderEdit} handleClose={handleClose}></CreateCard>
-					</DialogContent> 
+					</DialogContent>
 				</Dialog>
 				<Dialog
-				open={open}
-				onClose={()=>{setOpen(false)}}
-				aria-labelledby="alert-dialog-title"
-				aria-describedby="alert-dialog-description"
-			>
-				<DialogTitle id="alert-dialog-title">Delete List</DialogTitle>
-				<DialogContent>
-					<DialogContentText id="alert-dialog-description">
-						Are you sure you want to delete this list?
-						All it's cards will be lost!!
-					</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={()=>{setOpen(false)}} variant="contained" color="primary">No</Button>
-					<Button onClick={deleteList} autoFocus variant="contained" color="secondary">
-						Yes, delete the list
-					</Button>
-				</DialogActions>
-			</Dialog>
+					open={open}
+					onClose={() => { setOpen(false) }}
+					aria-labelledby="alert-dialog-title"
+					aria-describedby="alert-dialog-description"
+				>
+					<DialogTitle id="alert-dialog-title">Delete List</DialogTitle>
+					<DialogContent>
+						<DialogContentText id="alert-dialog-description">
+							Are you sure you want to delete this list?
+							All it's cards will be lost!!
+						</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={() => { setOpen(false) }} variant="contained" color="primary">No</Button>
+						<Button onClick={deleteList} autoFocus variant="contained" color="secondary">
+							Yes, delete the list
+						</Button>
+					</DialogActions>
+				</Dialog>
 			</Stack>
 		);
 	} else {
