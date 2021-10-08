@@ -3,7 +3,7 @@ import React from 'react';
 import { Login } from './TestComponents/login';
 import { Welcome } from './TestComponents/welcome';
 import { Omniport } from './TestComponents/omniport';
-import { ListProject } from './TestComponents/listproject';
+import  ListProject  from './TestComponents/listproject';
 import { CreateCard } from './TestComponents/CreateCard';
 import CreateProject from './TestComponents/CreateProject';
 import { createTheme, ThemeProvider } from '@mui/material';
@@ -51,8 +51,8 @@ export default class App extends React.Component {
 		return (
 			<ThemeProvider theme={theme}>
 				<Router>
-					<Grid container spacing={1}>
-						<Grid item sm={3}>
+					<Grid container spacing={1} height={"100vh"}>
+						<Grid item sm={3} height={"100%"}>
 							<Route
 								path="/"
 								render={(props) => {
@@ -64,8 +64,7 @@ export default class App extends React.Component {
 								}}
 							/>
 						</Grid>
-						<Grid item sm={9}>
-							<h1>Trello App</h1>
+						<Grid item sm={9} sx={{maxHeight:"100%", overflow:"auto"}}>
 							<Route
 								exact
 								path="/"

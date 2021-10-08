@@ -102,6 +102,7 @@ function CreateList(props) {
 					setShowAlert(true);
 					setSubmit(true);
 					setCreated(true);
+					setTitle('');
 				})
 				.catch((error) => {
 					console.log(error);
@@ -140,7 +141,7 @@ function CreateList(props) {
 			autoComplete="off"
 		>
 			
-			<Input placeholder="Add a new list" inputProps={ariaLabel} onChange={handleCreateList} />
+			<Input placeholder="Add a new list" inputProps={ariaLabel} onChange={handleCreateList} value={title} />
 			<IconButton
 				color="primary"
 				aria-label="add task"

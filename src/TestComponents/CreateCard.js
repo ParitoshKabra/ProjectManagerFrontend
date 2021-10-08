@@ -16,10 +16,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { DialogTitle, DialogActions, Dialog, DialogContent, DialogContentText } from '@material-ui/core';
 import { Alert } from '@mui/material';
 import { Redirect } from 'react-router-dom';
+import Autocomplete from '@mui/material/Autocomplete';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const cookies = new Cookies();
 
-// import AdapterDateFns from '@mui/lab/AdapterDateFns';
-// import LocalizationProvider from '@mui/lab/LocalizationProvider';
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -33,21 +36,21 @@ const MenuProps = {
 
 export const CreateCard = (props) => {
 	// const [card, setcard] = useState({"card_list"})
-	const [ title, setTitle ] = useState('');
-	const [ errorTitle, setErrorTitle ] = useState(false);
-	const [ errormsg, setErrorMsg ] = useState('');
-	const [ alertMsg, setAlertMsg ] = useState('');
-	const [ alert, setAlert ] = useState(false);
-	const [ descp, setDescp ] = useState('none');
-	const [ datetime, setDateTime ] = useState(new Date().toISOString());
-	const [ assigned_to, setAssigned_to ] = useState([]);
-	const [ assigned_toU, setAssigned_toU ] = useState([]); //how to fix this??
-	const [ members, setMembers ] = useState({});
-	const [open, setOpen] = useState(false)
+	const [title, setTitle] = useState('');
+	const [errorTitle, setErrorTitle] = useState(false);
+	const [errormsg, setErrorMsg] = useState('');
+	const [alertMsg, setAlertMsg] = useState('');
+	const [alert1, setAlert] = useState(false);
+	const [descp, setDescp] = useState('none');
+	const [datetime, setDateTime] = useState(new Date().toISOString());
+	const [assigned_to, setAssigned_to] = useState([]);
+	const [members, setMembers] = useState({});
+	const [editMembers, setEditMembers] = useState([]);
+	const [open, setOpen] = useState(false);
 	// created_by, list
-	const [ errorassign, setErrorAssign ] = useState(false);
+	const [errorassign, setErrorAssign] = useState(false);
 	const history = useHistory();
-	const checkEdit = () => {
+	const checkEdit = (mems) => {
 		console.log('Ia m checkEdit', props.edit, props.card);
 		if (props.edit) {
 			console.log(props.card);
@@ -55,6 +58,17 @@ export const CreateCard = (props) => {
 			setDescp(props.card['descp']);
 			setAssigned_to(props.card['assigned_to']);
 			setDateTime(props.card['due_date']);
+			if (mems !== undefined) {
+				let array = [];
+				props.card['assigned_to'].forEach((elem) => {
+					for (let index = 0; index < mems.length; index++) {
+						if (elem === mems[index].id) {
+							array.push(mems[index]);
+						}
+					}
+				});
+				setEditMembers(array);
+			}
 		}
 	};
 	const handleCreateCard = async (e) => {
@@ -116,15 +130,13 @@ export const CreateCard = (props) => {
 			});
 		// console.log(fetchUsername(res['members']));
 		setMembers(res['members']);
+		checkEdit(res['members']);
 	};
 
 	useEffect(() => {
-		if (!props.loginStatus) {
-			props.history.push('/');
-		}
 		console.log('UseEffect is called');
-		checkEdit();
 		getMembers();
+		checkEdit();
 		props.getUser();
 	}, []);
 
@@ -172,23 +184,14 @@ export const CreateCard = (props) => {
 				setAlertMsg(error);
 			});
 	};
-	const handleSelectChange = (event) => {
-		console.log(event.target.value);
-		console.log(assigned_toU, assigned_to);
+	const handleSelectChange = (event, values) => {
 		setErrorAssign(false);
-		if (event.target.value.length === 0) {
+		if (values.length === 0) {
 			setErrorAssign(true);
 		}
-		setAssigned_to(event.target.value);
-		let usernames = [];
-		for (let i = 0; i < event.target.value.length; i++) {
-			members.forEach((item) => {
-				if (item.id === event.target.value[i]) {
-					usernames.push(item.username);
-				}
-			});
-		}
-		setAssigned_toU(usernames);
+		// setAssigned_to(event.target.value);
+		let assign_list = values.map((item) => item.id);
+		setAssigned_to(assign_list);
 	};
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -200,7 +203,6 @@ export const CreateCard = (props) => {
 			setErrorAssign(true);
 		}
 		if (!errorassign && !errorTitle) {
-			console.log(props);
 			let data = {
 				cards_list: props.match.params.id,
 				created_by: props.user.id,
@@ -210,7 +212,9 @@ export const CreateCard = (props) => {
 				due_date: datetime
 			};
 
-			console.log(cookies.get('csrftoken'));
+			if (cookies.get('csrftoken') === undefined) {
+				alert('Logout and re-authorize :|');
+			}
 			if (!props.edit) {
 				props.axiosInstance
 					.post('http://127.0.0.1:8000/trelloAPIs/cards/', data, {
@@ -221,7 +225,6 @@ export const CreateCard = (props) => {
 						}
 					})
 					.then((response) => {
-						console.log(response.data);
 						history.goBack();
 					})
 					.catch((error) => {
@@ -244,126 +247,142 @@ export const CreateCard = (props) => {
 					})
 					.catch((error) => {
 						console.log(error);
-						setAlert(true)
-						setAlertMsg(error)
+						setAlert(true);
+						setAlertMsg(error);
 					});
 				props.handleClose();
 			}
 		}
 	};
-	const handleClose = (e) =>{
-		console.log("Closing the card");
+	const handleClose = (e) => {
+		console.log('Closing the card');
 		setOpen(false);
-	}
-	if(props.loginStatus){
-	return (
-		<Box
-			component="form"
-			sx={{
-				display: 'flex',
-				flexDirection: 'column',
-				'& > :not(style)': { m: 1, width: '25ch' }
-			}}
-			noValidate
-			autoComplete="off"
-		>
-			<TextField
-				id="filled-basic"
-				label="Title"
-				variant="outlined"
-				color="secondary"
-				InputLabelProps={{
-					shrink: true
+	};
+	if (props.loginStatus) {
+		return (
+			<Box
+				component="form"
+				sx={{
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+					'& > :not(style)': { m: 1, width: '25ch' }
 				}}
-				value={title}
-				onChange={(e) => {
-					setTitle(e.target.value);
-					handleCreateCard(e);
-				}}
-				error={errorTitle}
-				helperText={errormsg}
-			/>
-			<TextField
-				id="standard-multiline-flexible"
-				label="Description"
-				variant="outlined"
-				color="secondary"
-				InputLabelProps={{
-					shrink: true
-				}}
-				value={descp}
-				multiline
-				onChange={(e) => setDescp(e.target.value)}
-				rows={4}
-			/>
-			<TextField
-				id="datetime-local"
-				label="Due-Date"
-				type="datetime-local"
-				InputLabelProps={{
-					shrink: true
-				}}
-				value={datetime}
-				variant="outlined"
-				color="secondary"
-				sx={{ width: 250 }}
-				onChange={(e) => {
-					setDateTime(e.target.value);
-				}}
-			/>
-			<Select
-				labelId="demo-multiple-checkbox-label"
-				id="demo-multiple-checkbox"
-				multiple
-				value={assigned_to}
-				input={<OutlinedInput label="Assign To" />}
-				onChange={handleSelectChange}
-				renderValue={(assigned_toU) => assigned_toU.join(', ')}
-				MenuProps={MenuProps}
-				error={errorassign}
+				noValidate
+				autoComplete="off"
 			>
-				{choices}
-			</Select>
-			<ButtonGroup>
-				<Button variant="contained" color="secondary" type="submit" onClick={handleSubmit}>
-					{props.edit ? 'Update' : 'Submit'}
-				</Button>
-				<Button
-					startIcon={<DeleteIcon/>}
-					onClick={() =>{setOpen(true)}}
-					disabled={!props.edit || props.user.id !== props.card.created_by}
+				<TextField
+					id="filled-basic"
+					label="Title"
+					variant="outlined"
+					color="secondary"
+					InputLabelProps={{
+						shrink: true
+					}}
+					value={title}
+					onChange={(e) => {
+						setTitle(e.target.value);
+						handleCreateCard(e);
+					}}
+					error={errorTitle}
+					helperText={errormsg}
 				/>
-			</ButtonGroup>
-			<Dialog
-				open={open}
-				onClose={handleClose}
-				aria-labelledby="alert-dialog-title"
-				aria-describedby="alert-dialog-description"
-			>
-				<DialogTitle id="alert-dialog-title">Delete Card</DialogTitle>
-				<DialogContent>
-					<DialogContentText id="alert-dialog-description">
-						Are you sure you want to delete this card?
-					</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleClose} variant="contained" color="primary">No</Button>
-					<Button onClick={deleteCard} autoFocus variant="contained" color="secondary">
-						Yes, delete the card
+				<TextField
+					id="standard-multiline-flexible"
+					label="Description"
+					variant="outlined"
+					color="secondary"
+					InputLabelProps={{
+						shrink: true
+					}}
+					value={descp}
+					multiline
+					onChange={(e) => setDescp(e.target.value)}
+					rows={4}
+				/>
+				<TextField
+					id="datetime-local"
+					label="Due-Date"
+					type="datetime-local"
+					InputLabelProps={{
+						shrink: true
+					}}
+					value={datetime}
+					variant="outlined"
+					color="secondary"
+					sx={{ width: 250 }}
+					onChange={(e) => {
+						setDateTime(e.target.value);
+					}}
+				/>
+
+				<Autocomplete
+					multiple
+					id="checkboxes-tags-demo"
+					options={members}
+					disableCloseOnSelect
+					getOptionLabel={(option) => option.username}
+					renderOption={(props, option, { selected }) => (
+						<li {...props}>
+							<Checkbox
+								icon={icon}
+								checkedIcon={checkedIcon}
+								style={{ marginRight: 8 }}
+								checked={selected}
+							/>
+							{option.username}
+						</li>
+					)}
+					style={{ width: 400 }}
+					value={editMembers}
+					onChange={(event, values) => {
+						setEditMembers(values);
+						handleSelectChange(event, values);
+					}}
+					renderInput={(params) => <TextField {...params} label="Checkboxes" placeholder="Members..." />}
+				/>
+				<ButtonGroup>
+					<Button variant="contained" color="secondary" type="submit" onClick={handleSubmit}>
+						{props.edit ? 'Update' : 'Submit'}
 					</Button>
-				</DialogActions>
-			</Dialog>
-		</Box>
-	
-		//ui
-	);
-			}
-			else{
-				if(props.done){
-					return <Redirect to="/"/>
-				}
-				else{
-					return <p>Checking login status ....</p>
-				}
-			}
+					<Button
+						startIcon={<DeleteIcon />}
+						onClick={() => {
+							setOpen(true);
+						}}
+						disabled={!props.edit || props.user.id !== props.card.created_by}
+					/>
+				</ButtonGroup>
+				<Dialog
+					open={open}
+					onClose={handleClose}
+					aria-labelledby="alert-dialog-title"
+					aria-describedby="alert-dialog-description"
+				>
+					<DialogTitle id="alert-dialog-title">Delete Card</DialogTitle>
+					<DialogContent>
+						<DialogContentText id="alert-dialog-description">
+							Are you sure you want to delete this card?
+						</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={handleClose} variant="contained" color="primary">
+							No
+						</Button>
+						<Button onClick={deleteCard} autoFocus variant="contained" color="secondary">
+							Yes, delete the card
+						</Button>
+					</DialogActions>
+				</Dialog>
+			</Box>
+
+			//ui
+		);
+	} else {
+		if (props.done) {
+			return <Redirect to="/" />;
+		} else {
+			return <p>Checking login status ....</p>;
+		}
+	}
 };

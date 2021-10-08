@@ -10,7 +10,7 @@ import AddCircleIcon from '@material-ui/icons/Add';
 import { ButtonGroup } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ListItemText } from '@material-ui/core';
-import { ListItem } from '@mui/material';
+import { ListItemButton } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import { CreateCard } from './CreateCard';
@@ -21,11 +21,30 @@ const useStyles = makeStyles({
 		border: '50%'
 	},
 	container: {
-		maxWidth: '148px',
-		maxHeight: '200px',
+		height: "300px",
+		maxHeight: '300px',
 		overflow: 'auto',
-		border: '2px solid red'
+		border: '2px solid red',
+		padding : "15px",
+		borderRadius : "10px",
+		alignItems: "center"
+	},
+	card :{
+		backgroundColor: "#f50057",
+		padding: "8px 4px",
+		borderRadius: "10px",
+		"&:hover":{
+			opacity: 0.8,
+
+		},
+		
+	},
+	buttonGroup: {
+		"&.MuiButtonGroup-root":{
+			marginTop: "auto"
+		}
 	}
+
 });
 
 export const MyList = (props) => {
@@ -85,7 +104,7 @@ export const MyList = (props) => {
 		if (listContent['list_cards']) {
 			cards = listContent.list_cards.map((card) => {
 				return (
-					<ListItem>
+					<ListItemButton className={classes.card}>
 						<ListItemText primary={card.title} />
 						<ButtonGroup key={card.id}>
 							<Button
@@ -101,20 +120,20 @@ export const MyList = (props) => {
 								startIcon={<VisibilityIcon />}
 							/>
 						</ButtonGroup>
-					</ListItem>
+					</ListItemButton>
 				);
 			});
 		} else {
 			cards = 'Loading cards...';
 		}
 		return (
-			<Stack spacing={2} className={classes.conatainer}>
+			<Stack spacing={2} className={classes.container} justify={"center"}>
 				<Typography variant="h6" gutterBottom align="center">
 					{listContent.title}
 				</Typography>
-				<Stack spacing={1.2}>{cards}</Stack>
+				<Stack spacing={1.2} sx={{width:"100%"}}>{cards}</Stack>
 
-				<ButtonGroup>
+				<ButtonGroup className={classes.buttonGroup}>
 					<Button
 						color="primary"
 						variant="outlined"
