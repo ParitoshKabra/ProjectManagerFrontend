@@ -6,10 +6,11 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { MenuItem } from '@mui/material';
 import Button from '@mui/material/Button';
-import { ButtonGroup } from '@mui/material';
+import { Grid } from '@mui/material';
 import Select from '@mui/material/Select';
 import { Checkbox } from '@mui/material';
 import { ListItemIcon, ListItemText } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { OutlinedInput } from '@mui/material';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import { useHistory } from 'react-router';
@@ -20,6 +21,8 @@ import axios from 'axios';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
+import { Container } from '@material-ui/core';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -34,8 +37,20 @@ const MenuProps = {
 		}
 	}
 };
+const useStyles = makeStyles(theme => (
+	{
+		container: {
+			'&.MuiContainer-root': {
+				display: 'flex',
+				justifyContent: 'space-between',
+				width: '100%'
+			}
+		}
+	}
+))
 // how to render richtext as filled value in CKEditor
 function CreateProject(props) {
+	const classes = useStyles();
 	const [title, setTitle] = useState('');
 	const [descp, setDescp] = useState('');
 	const [members, setMembers] = useState([]);
@@ -186,7 +201,6 @@ function CreateProject(props) {
 				/>
 				<CKEditor
 					editor={ClassicEditor}
-					data=""
 					onReady={(editor) => {
 						// You can store the "editor" and use when it is needed.
 						console.log('Editor is ready to use!', editor);
@@ -196,7 +210,7 @@ function CreateProject(props) {
 						setDescp(data);
 						console.log({ event, editor, data });
 					}}
-					value={descp}
+					data={descp}
 				/>
 				{/* <Select
 				labelId="demo-multiple-checkbox-label"
@@ -242,7 +256,7 @@ function CreateProject(props) {
 					}}
 					renderInput={(params) => <TextField {...params} label="Checkboxes" placeholder="Members..." />}
 				/>
-				<ButtonGroup>
+				<Container component="div" className={classes.container}>
 					<Button color="primary" variant="contained" type="submit" onClick={handleSubmit}>
 						{props.edit ? "Update" : "Submit"}
 					</Button>
@@ -250,10 +264,10 @@ function CreateProject(props) {
 						e.preventDefault();
 						setOpen(true);
 					}}>
-						DELETE PROJECT
+						<DeleteIcon />
 					</Button> : null
 					}
-				</ButtonGroup>
+				</Container>
 
 				<Dialog
 					open={open}

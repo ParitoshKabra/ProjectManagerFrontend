@@ -11,6 +11,8 @@ import axios from 'axios';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { Sidebar } from './TestComponents/sidebar';
 import { Grid } from '@mui/material';
+import MyCard from './TestComponents/Card.js'
+import AssignedCards from './TestComponents/AssignedCards';
 const theme = createTheme({
 	palette: {
 		primary: {
@@ -97,6 +99,21 @@ export default class App extends React.Component {
 							/>
 							<Route
 								exact
+								path="/cards"
+								render={(props) => {
+									return (
+										<AssignedCards
+											{...props}
+											loginStatus={this.state.loggedin}
+											checkLoginStatus={this.checkLoginStatus}
+											user={this.state.user}
+											getUser={this.getUser}
+										/>
+									);
+								}}
+							/>
+							<Route
+								exact
 								path="/project/:id"
 								render={(props) => {
 									return (
@@ -121,7 +138,7 @@ export default class App extends React.Component {
 							/>
 							<Route
 								exact
-								path="/createCard/:id/:projectid"
+								path="/createCard/:projectid/:id"
 								render={(props) => {
 									return (
 										<CreateCard
@@ -154,6 +171,22 @@ export default class App extends React.Component {
 									);
 								}}
 							/>
+							<Route
+								exact
+								path="/project/:projectId/:cardId"
+								render={(props) => {
+									return (
+										<MyCard
+											{...props}
+											user={this.state.user}
+											axiosInstance={axiosInstance}
+											loginStatus={this.state.loggedin}
+											getUser={this.getUser}
+											done={this.state.done}
+										/>
+									);
+								}}
+							/>
 						</Grid>
 					</Grid>
 				</Router>
@@ -165,10 +198,13 @@ export default class App extends React.Component {
 		await axios
 			.get('http://127.0.0.1:8000/trelloAPIs/check_login', { withCredentials: true })
 			.then((response) => {
-				console.log('finished checking');
-				if (response.data.loggedin === true && this.state.loggedin === false) {
+				console.log('finished checking', 'response: ', response.data.loggedin, 'state: ', this.state.loggedin);
+				if (response.data.loggedin === true) {
 					this.setState({ loggedin: true });
 				} else if (this.state.loggedin === true && response.data.loggedin === false) {
+					this.setState({ loggedin: false });
+				}
+				else {
 					this.setState({ loggedin: false });
 				}
 			})
@@ -180,7 +216,7 @@ export default class App extends React.Component {
 		await axios
 			.get('http://127.0.0.1:8000/trelloAPIs/user', { withCredentials: true })
 			.then((res) => {
-				console.log('user data', res.data[0]);
+				console.log("user is fetched")
 				this.setState({ user: res.data[0] });
 			})
 			.catch((error) => {

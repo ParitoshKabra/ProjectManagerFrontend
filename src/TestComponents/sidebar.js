@@ -24,31 +24,39 @@ const useStyles = makeStyles(theme => ({
 		maxHeight: "10%"
 	}
 }))
-const regex = new RegExp('^/project/[0-9]+$');
+const regex = new RegExp('^/(project|createCard)/[0-9]+(/[0-9]+)?$');
 export const Sidebar = (props) => {
 	const [activeItem, setactiveItem] = React.useState({});
 	const [role, setRole] = React.useState('');
 	const [open, setOpen] = React.useState(false);
-
+	const [path, setPath] = React.useState(props.location.pathname);
 	const classes = useStyles();
-	React.useEffect(() => {
-		console.log('location', props.location.pathname);
-		console.log('regex', regex.test(props.location.pathname));
+	React.useEffect(async () => {
+		console.log("after mounting sidebar", props.user, path);
 		if (regex.test(props.location.pathname)) {
-			console.log('setting active item to trello app', props.location);
-			getActiveProjectOnRefresh(props.location.pathname.slice('/project/'.length));
+			let s = path.split('/');
+			if (s[1] === 'project' || s[1] === 'createCard') {
+				console.log("called refresh!!");
+				await getActiveProjectOnRefresh(s[2]);
+			}
 		}
-		else if (props.location.pathname === '/dashboard') {
+		else if (path === '/dashboard') {
 			setactiveItem({ 'temp': 'Dashboard' });
 		}
-	}, [])
-	React.useEffect(() => {
+		else if (path === '/cards') {
+			setactiveItem({ 'temp': 'Assigned Cards' });
+		}
 		props.getUser();
-		console.log('open', open);
 
-	}, []);
-	React.useEffect((t) => {
-		getStatusForActiveItem();
+	}, [path])
+
+	React.useEffect(async () => {
+		console.log(activeItem);
+		if (Object.keys(activeItem).length !== 0) {
+			console.log("Inside useEffect after setting activeItem", activeItem);
+			await props.getUser();
+			getStatusForActiveItem();
+		}
 	}, [activeItem])
 
 	const handleClick = () => {
@@ -62,7 +70,9 @@ export const Sidebar = (props) => {
 		console.log('setting active project', project);
 		setactiveItem(project);
 	}
-	const getStatusForActiveItem = () => {
+	const getStatusForActiveItem = async () => {
+		console.log(activeItem.created_by, props.user.id);
+
 		if (activeItem.hasOwnProperty('temp')) {
 			setRole(activeItem['temp']);
 		}
@@ -70,16 +80,20 @@ export const Sidebar = (props) => {
 			setRole('Project-Creator');
 		} else if (activeItem.admins.indexOf(props.user.id) != -1) {
 			setRole('Project-Admin');
-		} else {
+		} else if (activeItem.members.indexOf(props.user.id) !== -1) {
 			setRole('Project-Member');
 		}
+		else {
+			setRole('Trello App');
+		}
 	}
-	const getActiveProjectOnRefresh = (id) => {
+	const getActiveProjectOnRefresh = async (id) => {
 		console.log('I was called!!', id)
 		axios
 			.get('http://127.0.0.1:8000/trelloAPIs/projects/' + parseInt(id), { withCredentials: true })
 			.then((response) => {
-				console.log("I was called in sidebar");
+				console.log("getting response in sidebar on refresh");
+
 				setactiveItem(response.data);
 			})
 			.catch((error) => {
@@ -94,7 +108,7 @@ export const Sidebar = (props) => {
 				display: 'flex',
 				flexDirection: 'column',
 				border: '2px solid black',
-				height: '100vh'
+				height: '100%'
 			}}
 			component="nav"
 			aria-labelledby="nested-list-subheader"

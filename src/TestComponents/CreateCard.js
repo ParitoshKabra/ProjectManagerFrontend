@@ -44,7 +44,7 @@ export const CreateCard = (props) => {
 	const [descp, setDescp] = useState('none');
 	const [datetime, setDateTime] = useState(new Date().toISOString());
 	const [assigned_to, setAssigned_to] = useState([]);
-	const [members, setMembers] = useState({});
+	const [members, setMembers] = useState([]);
 	const [editMembers, setEditMembers] = useState([]);
 	const [open, setOpen] = useState(false);
 	// created_by, list
@@ -150,7 +150,7 @@ export const CreateCard = (props) => {
 	// };
 
 	let choices = [];
-	if (Object.keys(members).length !== 0) {
+	if (members.length !== 0) {
 		choices = members.map((option) => {
 			return (
 				<MenuItem key={option.id} value={option.id}>

@@ -89,7 +89,7 @@ function MakeAdmin(props) {
         }
     };
     let mems;
-    if (members.length != 0) {
+    if (members.length !== 0) {
         mems = members.map(item => {
             const labelId = `checkbox-list-label-${item.id}`;
             return (<ListItemButton role={undefined} onClick={handleToggle(item.id)} key={item.id} dense>
@@ -123,10 +123,10 @@ function MakeAdmin(props) {
             </Typography>
             <Demo>
                 <List dense={true}>
-                    {members.length != 0 ? mems : <CircularProgress />}
+                    {members.length !== 0 ? mems : <CircularProgress />}
 
                 </List>
-                {members.length != 0 ? <Button variant="contained" color="secondary" onClick={() => {
+                {members.length !== 0 ? <Button variant="contained" color="secondary" onClick={() => {
                     if (!adminStatus) {
                         props.handleClose();
                         return;

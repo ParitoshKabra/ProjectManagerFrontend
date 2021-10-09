@@ -92,7 +92,9 @@ export const MyList = (props) => {
 		setEditCard(true);
 		setCardUnderEdit(card);
 	};
-	const ViewCard = () => { };
+	const ViewCard = (id) => {
+		props.history.push(`/project/${props.project.id}/${id}`);
+	};
 
 	const handleClose = () => {
 		setEditCard(false);
@@ -115,7 +117,7 @@ export const MyList = (props) => {
 							/>
 							<Button
 								variant="outlined"
-								onClick={ViewCard}
+								onClick={() => { ViewCard(card.id) }}
 								color="secondary"
 								startIcon={<VisibilityIcon />}
 							/>
@@ -139,7 +141,7 @@ export const MyList = (props) => {
 						variant="outlined"
 						className={classes.btn}
 						onClick={() => {
-							props.history.push('/createCard/' + props.list.id + '/' + props.list.lists_project);
+							props.history.push('/createCard/' + props.list.lists_project + '/' + props.list.id);
 						}}
 					>
 						<AddCircleIcon />
