@@ -34,12 +34,14 @@ export class Welcome extends React.Component {
 				<Typography variant="h2" textAlign="center" mt={20}>Welcome {this.activeUser.username}</Typography>
 			</>;
 		} else {
-			if (this.props.done) {
+			console.log("inside dashboard.. ", this.props.loginStatus, "done: ", this.props.done);
+			if (this.props.done === true) {
 				return <Redirect to="/" />;
 			}
 			else {
 				return <p>Checking login status....</p>
 			}
+
 		}
 	}
 }

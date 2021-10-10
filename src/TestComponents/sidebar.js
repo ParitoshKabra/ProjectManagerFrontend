@@ -32,10 +32,10 @@ export const Sidebar = (props) => {
 	const [role, setRole] = React.useState('');
 	const [open, setOpen] = React.useState(false);
 	const classes = useStyles();
-	const activeUser = props.isDiffUser ? props.diffUser : props.user;
-
+	let activeUser = props.isDiffUser ? props.diffUser : props.user;
 	React.useEffect(async () => {
-		console.log("after mounting sidebar", activeUser, location);
+		// console.log("after mounting sidebar", "isDiffUser: ", props.isDiffUser, location);
+		activeUser = props.isDiffUser ? props.diffUser : props.user;
 		if (regex.test(location.pathname)) {
 			let s = location.pathname.split('/');
 			if (s[1] === 'project' || s[1] === 'createCard') {
@@ -44,6 +44,7 @@ export const Sidebar = (props) => {
 			}
 		}
 		else if (location.pathname === '/dashboard') {
+			console.log("Inside sidebar, setting dashboard");
 			setactiveItem({ 'temp': 'Dashboard' });
 		}
 		else if (location.pathname === '/cards') {
@@ -60,12 +61,12 @@ export const Sidebar = (props) => {
 		}
 		props.getUser();
 
-	}, [location])
+	}, [location, props.diffUser])
 
 	React.useEffect(async () => {
 		console.log(activeItem);
 		if (Object.keys(activeItem).length !== 0) {
-			console.log("Inside useEffect after setting activeItem", activeItem);
+			// console.log("Inside useEffect after setting activeItem", activeItem);
 			if (!props.isDiffUser) await props.getUser();
 			getStatusForActiveItem();
 		}
@@ -86,7 +87,15 @@ export const Sidebar = (props) => {
 		console.log(activeItem.created_by, activeUser.id);
 
 		if (activeItem.hasOwnProperty('temp')) {
-			setRole(activeItem['temp']);
+			if (activeItem['temp'] === 'Dashboard') {
+				console.log('activeUser: ', activeUser);
+				const appRole = activeUser.is_staff ? 'App-Admin' : 'App-User';
+				console.log('app-role: ', appRole);
+				setRole(appRole);
+			}
+			else {
+				setRole(activeItem['temp']);
+			}
 		}
 		else if (activeItem.created_by === activeUser.id) {
 			setRole('Project-Creator');
@@ -204,10 +213,11 @@ export const Sidebar = (props) => {
 				</ListItemButton>}
 
 			<ListItemButton
-				onClick={() => {
+				onClick={async () => {
 					axios
 						.get('http://127.0.0.1:8000/trelloAPIs/logout', { withCredentials: true })
 						.then((response) => {
+							props.checkLoginStatus();
 							props.history.push('/');
 						})
 						.catch((error) => {

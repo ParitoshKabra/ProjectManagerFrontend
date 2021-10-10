@@ -54,8 +54,8 @@ export default class App extends React.Component {
 	}
 	async otherUserView(id) {
 		if (!this.state.isDiffUser) {
-			this.setState({ isDiffUser: true }, () => {
-				this.getOtherUser(id);
+			this.setState({ isDiffUser: true }, async () => {
+				await this.getOtherUser(id);
 			});
 		}
 		else {
@@ -73,7 +73,9 @@ export default class App extends React.Component {
 			.catch((error) => {
 				console.log(error);
 			});
+		console.log('I am printed after user is fetched!!');
 	}
+
 	//once the user is logged in sidebar should be there with every component
 	render() {
 		return (
@@ -85,7 +87,7 @@ export default class App extends React.Component {
 								path="/"
 								render={(props) => {
 									return this.state.loggedin ? (
-										<Sidebar {...props} user={this.state.user} getUser={this.getUser} isDiffUser={this.state.isDiffUser} diffUser={this.state.diffUser} otherUserView={this.otherUserView} />
+										<Sidebar {...props} user={this.state.user} getUser={this.getUser} isDiffUser={this.state.isDiffUser} diffUser={this.state.diffUser} otherUserView={this.otherUserView} checkLoginStatus={this.checkLoginStatus} />
 									) : (
 										<React.Fragment />
 									);
