@@ -27,8 +27,11 @@ export class Welcome extends React.Component {
 			// Design starts here 
 			/* Welcome page should set the grid layout and then every component individually should be implemented, like Projects, Comments, Assigned_Cards, and the Dashboard then to be decided at the end*/
 			// <h3>Welcome {this.state.user['username']}</h3>
+			this.activeUser = !this.props.isDiffUser ? this.props.user : this.props.diffUser;
+
+			console.log("active user: ", this.activeUser);
 			return <>
-				<Typography variant="h2" textAlign="center" mt={20}>Welcome to the new Trello App</Typography>
+				<Typography variant="h2" textAlign="center" mt={20}>Welcome {this.activeUser.username}</Typography>
 			</>;
 		} else {
 			if (this.props.done) {

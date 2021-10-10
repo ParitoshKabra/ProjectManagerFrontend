@@ -35,6 +35,7 @@ const MenuProps = {
 };
 
 export const CreateCard = (props) => {
+	console.log("git issue");
 	// const [card, setcard] = useState({"card_list"})
 	const [title, setTitle] = useState('');
 	const [errorTitle, setErrorTitle] = useState(false);
@@ -350,7 +351,7 @@ export const CreateCard = (props) => {
 						onClick={() => {
 							setOpen(true);
 						}}
-						disabled={!props.edit || props.user.id !== props.card.created_by}
+						disabled={!props.edit || props.user.id !== props.card.created_by || props.isDiffUser}
 					/>
 				</ButtonGroup>
 				<Dialog

@@ -13,7 +13,7 @@ import Cookies from 'universal-cookie';
 const ariaLabel = { 'aria-label': 'description' };
 const cookies = new Cookies();
 
-export const MyAlert = ({ TitleMsg, TitleDetail, disableAlertState }) => {
+export const MyAlert = ({ TitleMsg, TitleDetail, disableAlertState, DiffUser }) => {
 	useEffect(() => {
 		const timeout = setTimeout(() => {
 			disableAlertState();
@@ -42,8 +42,8 @@ export const MyAlert = ({ TitleMsg, TitleDetail, disableAlertState }) => {
 					severity={TitleMsg}
 					sx={{ mb: 2 }}
 				>
-					<AlertTitle>{TitleMsg}</AlertTitle>
-					{TitleDetail} — <strong>check it out!</strong>
+					<AlertTitle>{!DiffUser ? TitleMsg : "Error"}</AlertTitle>
+					{!DiffUser ? TitleDetail : "Go back to your account to create a list"} — <strong>check it out!</strong>
 				</Alert>
 			</Collapse>
 			<Button
@@ -81,7 +81,7 @@ function CreateList(props) {
 		e.preventDefault();
 		setSubmit(false);
 		console.log(TitleMsg);
-		if (TitleMsg === 'success' && !created) {
+		if (!props.isDiffUser && TitleMsg === 'success' && !created) {
 			const data = {
 				title: title,
 				lists_project: props.project.id
@@ -150,11 +150,12 @@ function CreateList(props) {
 				onClick={(e) => {
 					handleSubmit(e);
 				}}
+				disabled={props.isDiffUser}
 			>
 				<AddTaskIcon />
 			</IconButton>
 			{showAlert && (
-				<MyAlert TitleMsg={TitleMsg} TitleDetail={TitleDetail} disableAlertState={disableAlertState} handleCreateList={handleCreateList} />
+				<MyAlert TitleMsg={TitleMsg} TitleDetail={TitleDetail} disableAlertState={disableAlertState} DiffUser={props.isDiffUser} handleCreateList={handleCreateList} />
 			)}
 
 		</Box>

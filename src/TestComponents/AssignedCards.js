@@ -12,11 +12,13 @@ const createDOMPurify = require('dompurify');
 
 const DOMPurify = createDOMPurify(window);
 function AssignedCards(props) {
+    const activeUser = props.isDiffUser ? props.diffUser : props.user;
+
     if (props.loginStatus) {
-        if (Object.keys(props.user).length !== 0) {
+        if (Object.keys(activeUser).length !== 0) {
             return (
                 <React.Fragment>
-                    {props.user.assigned_cards.map(card => (
+                    {activeUser.assigned_cards.map(card => (
                         <Card sx={{ margin: "10px", zIndex: "100" }} variant="outlined" key={card.id}>
                             <CardContent sx={{ display: "flex", justifyContent: "space-between" }}>
 

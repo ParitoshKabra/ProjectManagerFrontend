@@ -27,12 +27,16 @@ const useStyles = makeStyles({
 		border: '2px solid red',
 		padding: "15px",
 		borderRadius: "10px",
-		alignItems: "center"
+		alignItems: "center",
+		padding: "10px 0"
 	},
 	card: {
-		backgroundColor: "#f50057",
+		boxShadow: "2px 2px 2px 2px rgba(14,15,18,0.15)",
 		padding: "8px 4px",
+		width: "100%",
 		borderRadius: "10px",
+		paddingLeft: "10px",
+		paddingRight: "10px",
 		"&:hover": {
 			opacity: 0.8,
 
@@ -114,6 +118,7 @@ export const MyList = (props) => {
 								onClick={(e) => { EditCard(card); }}
 								color="secondary"
 								startIcon={<EditRoundedIcon />}
+								disabled={props.isDiffUser || (!(card.created_by === props.user.id) && props.project.admins.indexOf(props.user.id) === -1)}
 							/>
 							<Button
 								variant="outlined"
@@ -133,7 +138,7 @@ export const MyList = (props) => {
 				<Typography variant="h6" gutterBottom align="center">
 					{listContent.title}
 				</Typography>
-				<Stack spacing={1.2} sx={{ width: "100%" }}>{cards}</Stack>
+				<Stack spacing={1.2} sx={{ width: "100%", }}>{cards}</Stack>
 
 				<ButtonGroup className={classes.buttonGroup}>
 					<Button
@@ -152,7 +157,7 @@ export const MyList = (props) => {
 						onClick={() => {
 							setOpen(true);
 						}}
-						disabled={props.project['admins'].indexOf(props.user.id) === -1}
+						disabled={!props.isDiffUser ? props.project['admins'].indexOf(props.user.id) === -1 : !(props.user.is_superuser)}
 					>
 						<DeleteIcon />
 					</Button>

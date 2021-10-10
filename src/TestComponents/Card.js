@@ -111,7 +111,7 @@ function MyCard(props) {
                 <Card className={cmnt.commented_by.id === props.user.id ? classes.cardSent : classes.cardNormal} key={cmnt.id}>
                     <CardHeader
                         avatar={
-                            <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                            <Avatar sx={{ bgcolor: red[500] }} aria-label="card">
                                 {cmnt.commented_by.username[0]}
                             </Avatar>
                         }
@@ -135,7 +135,7 @@ function MyCard(props) {
             <Card >
                 <CardHeader
                     avatar={
-                        <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                        <Avatar sx={{ bgcolor: red[500] }} aria-label="card">
                             R
                         </Avatar>
                     }

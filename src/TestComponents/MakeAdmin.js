@@ -50,7 +50,8 @@ function MyCheckBox({ option }) {
 function MakeAdmin(props) {
     const [madeAdmins, setMadeAdmins] = React.useState(props.project.admins);
     const [members, setMembers] = React.useState([]);
-    const adminStatus = props.user.id === props.project.created_by || props.project.admins.indexOf(props.user.id) !== -1;
+    const activeUser = props.isDiffUser ? props.diffUser : props.user;
+    const adminStatus = !props.isDiffUser ? (props.user.id === props.project.created_by || props.project.admins.indexOf(props.user.id) !== -1) : (props.user.is_staff || props.user.is_superuser);
     React.useEffect(() => {
         getMembers();
     }, []);
@@ -127,19 +128,19 @@ function MakeAdmin(props) {
 
                 </List>
                 {members.length !== 0 ? <Button variant="contained" color="secondary" onClick={() => {
-                    if (!adminStatus) {
+                    if (!adminStatus || (props.isDiffUser && !(props.user.is_superuser || props.user.is_staff))) {
                         props.handleClose();
                         return;
                     }
                     let data = {
-                        created_by: props.user.id,
+                        created_by: props.project.created_by,
                         members: props.project.members,
                         title: props.project.title,
                         descp: props.project.descp,
                         admins: madeAdmins
                     };
-                    if (props.user.id === props.project.created_by && madeAdmins.indexOf(props.user.id) === -1) {
-                        data.admins.push(props.user.id);
+                    if (activeUser.id === props.project.created_by && madeAdmins.indexOf(activeUser.id) === -1) {
+                        data.admins.push(activeUser.id);
                     }
 
                     props.axiosInstance

@@ -13,6 +13,8 @@ import { Sidebar } from './TestComponents/sidebar';
 import { Grid } from '@mui/material';
 import MyCard from './TestComponents/Card.js'
 import AssignedCards from './TestComponents/AssignedCards';
+import Members from './TestComponents/Members';
+
 const theme = createTheme({
 	palette: {
 		primary: {
@@ -36,10 +38,12 @@ axiosInstance.defaults.xsrfHeaderName = 'X-CSRFToken';
 export default class App extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { loggedin: false, user: {}, done: false };
+		this.state = { loggedin: false, user: {}, done: false, isDiffUser: false, diffUser: {} };
 
 		this.checkLoginStatus = this.checkLoginStatus.bind(this);
 		this.getUser = this.getUser.bind(this);
+		this.otherUserView = this.otherUserView.bind(this);
+		this.getOtherUser = this.getOtherUser.bind(this);
 	}
 	async componentDidMount() {
 		console.log('DidMount called');
@@ -47,6 +51,28 @@ export default class App extends React.Component {
 		console.log('Execution of Login Didmount done', this.state.loggedin);
 		await this.getUser();
 		this.setState({ done: true });
+	}
+	async otherUserView(id) {
+		if (!this.state.isDiffUser) {
+			this.setState({ isDiffUser: true }, () => {
+				this.getOtherUser(id);
+			});
+		}
+		else {
+			this.setState({ isDiffUser: false });
+		}
+	}
+	async getOtherUser(id) {
+		console.log('called in app.js to fetch other user: ', id, this.state.isDiffUser)
+		await axios
+			.get('http://127.0.0.1:8000/trelloAPIs/users_all/' + id + "/", { withCredentials: true })
+			.then((res) => {
+				console.log("diff user is fetched", res.data)
+				this.setState({ diffUser: res.data });
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	}
 	//once the user is logged in sidebar should be there with every component
 	render() {
@@ -59,7 +85,7 @@ export default class App extends React.Component {
 								path="/"
 								render={(props) => {
 									return this.state.loggedin ? (
-										<Sidebar {...props} user={this.state.user} getUser={this.getUser} />
+										<Sidebar {...props} user={this.state.user} getUser={this.getUser} isDiffUser={this.state.isDiffUser} diffUser={this.state.diffUser} otherUserView={this.otherUserView} />
 									) : (
 										<React.Fragment />
 									);
@@ -93,6 +119,9 @@ export default class App extends React.Component {
 											checkLoginStatus={this.checkLoginStatus}
 											user={this.state.user}
 											getUser={this.getUser}
+											isDiffUser={this.state.isDiffUser}
+											diffUser={this.state.diffUser}
+											otherUserView={this.otherUserView}
 										/>
 									);
 								}}
@@ -108,6 +137,9 @@ export default class App extends React.Component {
 											checkLoginStatus={this.checkLoginStatus}
 											user={this.state.user}
 											getUser={this.getUser}
+											isDiffUser={this.state.isDiffUser}
+											diffUser={this.state.diffUser}
+											otherUserView={this.otherUserView}
 										/>
 									);
 								}}
@@ -125,6 +157,9 @@ export default class App extends React.Component {
 											getUser={this.getUser}
 											done={this.state.done}
 											axiosInstance={axiosInstance}
+											isDiffUser={this.state.isDiffUser}
+											diffUser={this.state.diffUser}
+											otherUserView={this.otherUserView}
 										/>
 									);
 								}}
@@ -149,6 +184,9 @@ export default class App extends React.Component {
 											getUser={this.getUser}
 											edit={false}
 											done={this.state.done}
+											isDiffUser={this.state.isDiffUser}
+											diffUser={this.state.diffUser}
+											otherUserView={this.otherUserView}
 										/>
 									);
 								}}
@@ -167,6 +205,9 @@ export default class App extends React.Component {
 											done={this.state.done}
 											edit={false}
 											project={undefined}
+											isDiffUser={this.state.isDiffUser}
+											diffUser={this.state.diffUser}
+											otherUserView={this.otherUserView}
 										/>
 									);
 								}}
@@ -183,10 +224,33 @@ export default class App extends React.Component {
 											loginStatus={this.state.loggedin}
 											getUser={this.getUser}
 											done={this.state.done}
+											isDiffUser={this.state.isDiffUser}
+											diffUser={this.state.diffUser}
+											otherUserView={this.otherUserView}
 										/>
 									);
 								}}
 							/>
+							<Route
+								exact
+								path="/members"
+								render={(props) => {
+									return (
+										<Members
+											{...props}
+											user={this.state.user}
+											axiosInstance={axiosInstance}
+											loginStatus={this.state.loggedin}
+											getUser={this.getUser}
+											done={this.state.done}
+											isDiffUser={this.state.isDiffUser}
+											diffUser={this.state.diffUser}
+											otherUserView={this.otherUserView}
+										/>
+									);
+								}}
+							/>
+
 						</Grid>
 					</Grid>
 				</Router>

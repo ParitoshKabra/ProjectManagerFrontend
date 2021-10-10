@@ -100,7 +100,7 @@ class ListProject extends React.Component {
 						<div className={classes.btnGrp}>
 							<Button color="primary" variant="contained" className={classes.btn} onClick={() => {
 								this.setState({ editProject: true });
-							}} disabled={this.state.projectContent.admins.indexOf(this.props.user.id) === -1}>
+							}} disabled={!this.props.isDiffUser ? this.state.projectContent.admins.indexOf(this.props.user.id) === -1 : true}>
 								<EditIcon />
 							</Button>
 							<Button color="secondary" variant="contained" className={classes.btn} onClick={(e) => {

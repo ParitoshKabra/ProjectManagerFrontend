@@ -15,6 +15,7 @@ import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Divider } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import { useLocation } from 'react-router-dom'
 import axios from 'axios';
 // Main Component
 
@@ -26,35 +27,46 @@ const useStyles = makeStyles(theme => ({
 }))
 const regex = new RegExp('^/(project|createCard)/[0-9]+(/[0-9]+)?$');
 export const Sidebar = (props) => {
+	const location = useLocation();
 	const [activeItem, setactiveItem] = React.useState({});
 	const [role, setRole] = React.useState('');
 	const [open, setOpen] = React.useState(false);
-	const [path, setPath] = React.useState(props.location.pathname);
 	const classes = useStyles();
+	const activeUser = props.isDiffUser ? props.diffUser : props.user;
+
 	React.useEffect(async () => {
-		console.log("after mounting sidebar", props.user, path);
-		if (regex.test(props.location.pathname)) {
-			let s = path.split('/');
+		console.log("after mounting sidebar", activeUser, location);
+		if (regex.test(location.pathname)) {
+			let s = location.pathname.split('/');
 			if (s[1] === 'project' || s[1] === 'createCard') {
 				console.log("called refresh!!");
 				await getActiveProjectOnRefresh(s[2]);
 			}
 		}
-		else if (path === '/dashboard') {
+		else if (location.pathname === '/dashboard') {
 			setactiveItem({ 'temp': 'Dashboard' });
 		}
-		else if (path === '/cards') {
+		else if (location.pathname === '/cards') {
 			setactiveItem({ 'temp': 'Assigned Cards' });
+		}
+		else if (location.pathname === '/createProject') {
+			setactiveItem({ 'temp': "New Project" });
+		}
+		else if (location.pathname === '/members') {
+			setactiveItem({ 'temp': "Trello Users" });
+		}
+		else {
+			setactiveItem({ 'temp': '' });
 		}
 		props.getUser();
 
-	}, [path])
+	}, [location])
 
 	React.useEffect(async () => {
 		console.log(activeItem);
 		if (Object.keys(activeItem).length !== 0) {
 			console.log("Inside useEffect after setting activeItem", activeItem);
-			await props.getUser();
+			if (!props.isDiffUser) await props.getUser();
 			getStatusForActiveItem();
 		}
 	}, [activeItem])
@@ -71,16 +83,16 @@ export const Sidebar = (props) => {
 		setactiveItem(project);
 	}
 	const getStatusForActiveItem = async () => {
-		console.log(activeItem.created_by, props.user.id);
+		console.log(activeItem.created_by, activeUser.id);
 
 		if (activeItem.hasOwnProperty('temp')) {
 			setRole(activeItem['temp']);
 		}
-		else if (activeItem.created_by === props.user.id) {
+		else if (activeItem.created_by === activeUser.id) {
 			setRole('Project-Creator');
-		} else if (activeItem.admins.indexOf(props.user.id) != -1) {
+		} else if (activeItem.admins.indexOf(activeUser.id) != -1) {
 			setRole('Project-Admin');
-		} else if (activeItem.members.indexOf(props.user.id) !== -1) {
+		} else if (activeItem.members.indexOf(activeUser.id) !== -1) {
 			setRole('Project-Member');
 		}
 		else {
@@ -152,14 +164,14 @@ export const Sidebar = (props) => {
 				<Collapse in={open} timeout="auto" unmountOnExit>
 					<ProjectTemplate
 						{...props}
-						projects={props.user['projects_of_user']}
+						projects={activeUser['projects_of_user']}
 						setAsActive={setAsActive}
 						activeProject={activeItem}
 					/>
 				</Collapse>
 			</List>
 
-			<ListItemButton
+			{!props.isDiffUser ? <ListItemButton
 				variant="contained"
 				color="primary"
 				onClick={() => {
@@ -168,7 +180,28 @@ export const Sidebar = (props) => {
 				className={classes.root}
 			>
 				<ListItemText primary="Create New Project" />
-			</ListItemButton>
+			</ListItemButton> : null}
+			{!props.isDiffUser ? <ListItemButton
+				variant="contained"
+				color="primary"
+				onClick={() => {
+					props.history.push('/members');
+				}}
+				className={classes.root}
+			>
+				<ListItemText primary="All Users" />
+			</ListItemButton> :
+				<ListItemButton
+					variant="contained"
+					color="primary"
+					onClick={async () => {
+						await props.otherUserView();
+						props.history.push('/dashboard');
+					}}
+					className={classes.root}
+				>
+					<ListItemText primary="Your Profile" />
+				</ListItemButton>}
 
 			<ListItemButton
 				onClick={() => {
