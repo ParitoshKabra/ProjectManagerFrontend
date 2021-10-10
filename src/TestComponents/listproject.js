@@ -85,12 +85,12 @@ class ListProject extends React.Component {
 							<Typography variant="h5" component="h5">{this.state.projectContent.title}</Typography>
 							<CreateList {...this.props} project={this.state.projectContent} renderLists={this.renderLists}></CreateList>
 						</Container>
-						<div>
+						{/* <div>
 							<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(this.state.projectContent['descp']) }}></div>
 							<Switch defaultChecked />
-						</div>
+						</div> */}
 
-						<Grid container spacing={2}>
+						<Grid container spacing={2} >
 							{this.state.projectContent["project_lists"].map((list) => {
 								return <Grid item xs={6} md={4}>
 									<MyList {...this.props} list={list} project={this.state.projectContent} key={list.id} renderLists={this.renderLists} />

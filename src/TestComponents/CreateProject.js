@@ -183,79 +183,63 @@ function CreateProject(props) {
 				noValidate
 				autoComplete="off"
 			>
-				<TextField
-					id="filled-basic"
-					label="Title"
-					variant="outlined"
-					color="primary"
-					InputLabelProps={{
-						shrink: true
-					}}
-					onChange={(e) => {
-						setTitle(e.target.value);
-						// handleCreateCard(e);
-					}}
-					value={title}
-					error={errorTitle}
-					helperText={errorTitleMsg}
-				/>
-				<CKEditor
-					editor={ClassicEditor}
-					onReady={(editor) => {
-						// You can store the "editor" and use when it is needed.
-						console.log('Editor is ready to use!', editor);
-					}}
-					onChange={(event, editor) => {
-						const data = editor.getData();
-						setDescp(data);
-						console.log({ event, editor, data });
-					}}
-					data={descp}
-				/>
-				{/* <Select
-				labelId="demo-multiple-checkbox-label"
-				id="demo-multiple-checkbox"
-				multiple
-				value={members}
-				input={<OutlinedInput label="Members" />}
-				onChange={handleSelectChange}
-				renderValue={(members) => members.join(', ')}
-			>
-				{reg_members.map((option) => {
-					return (
-						<MenuItem key={option.id} value={option.id}>
-							<Checkbox checked={members.indexOf(option.id) > -1} color="secondary" />
-
-							<ListItemText primary={option.username} />
-						</MenuItem>
-					);
-				})}
-			</Select> */}
-				<Autocomplete
-					multiple
-					id="checkboxes-tags-demo"
-					options={reg_members}
-					disableCloseOnSelect
-					getOptionLabel={(option) => option.username}
-					renderOption={(props, option, { selected }) => (
-						<li {...props}>
-							<Checkbox
-								icon={icon}
-								checkedIcon={checkedIcon}
-								style={{ marginRight: 8 }}
-								checked={selected}
-							/>
-							{option.username}
-						</li>
-					)}
-					style={{ width: 400 }}
-					value={editMembers}
-					onChange={(event, values) => {
-						setEditMembers(values);
-						handleSelectChange(event, values);
-					}}
-					renderInput={(params) => <TextField {...params} label="Checkboxes" placeholder="Members..." />}
-				/>
+				<Container>
+					<TextField
+						id="filled-basic"
+						label="Title"
+						variant="outlined"
+						color="primary"
+						InputLabelProps={{
+							shrink: true
+						}}
+						onChange={(e) => {
+							setTitle(e.target.value);
+							// handleCreateCard(e);
+						}}
+						style={{ width: 400 }}
+						value={title}
+						error={errorTitle}
+						helperText={errorTitleMsg}
+					/>
+					<CKEditor
+						editor={ClassicEditor}
+						onReady={(editor) => {
+							// You can store the "editor" and use when it is needed.
+							console.log('Editor is ready to use!', editor);
+						}}
+						onChange={(event, editor) => {
+							const data = editor.getData();
+							setDescp(data);
+							console.log({ event, editor, data });
+						}}
+						data={descp}
+					/>
+					<Autocomplete
+						multiple
+						id="checkboxes-tags-demo"
+						options={reg_members}
+						disableCloseOnSelect
+						getOptionLabel={(option) => option.username}
+						renderOption={(props, option, { selected }) => (
+							<li {...props}>
+								<Checkbox
+									icon={icon}
+									checkedIcon={checkedIcon}
+									style={{ marginRight: 8 }}
+									checked={selected}
+								/>
+								{option.username}
+							</li>
+						)}
+						style={{ width: 400 }}
+						value={editMembers}
+						onChange={(event, values) => {
+							setEditMembers(values);
+							handleSelectChange(event, values);
+						}}
+						renderInput={(params) => <TextField {...params} label="Checkboxes" placeholder="Members..." />}
+					/>
+				</Container>
 				<Container component="div" className={classes.container}>
 					<Button color="primary" variant="contained" type="submit" onClick={handleSubmit}>
 						{props.edit ? "Update" : "Submit"}

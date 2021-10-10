@@ -24,11 +24,11 @@ const useStyles = makeStyles({
 		height: "300px",
 		maxHeight: '300px',
 		overflow: 'auto',
-		border: '2px solid red',
 		padding: "15px",
 		borderRadius: "10px",
 		alignItems: "center",
-		padding: "10px 0"
+		padding: "10px 0",
+		background: "linear-gradient(to right, #d9a7c7, #fffcdc)"
 	},
 	card: {
 		boxShadow: "2px 2px 2px 2px rgba(14,15,18,0.15)",
@@ -37,6 +37,7 @@ const useStyles = makeStyles({
 		borderRadius: "10px",
 		paddingLeft: "10px",
 		paddingRight: "10px",
+		background: "white",
 		"&:hover": {
 			opacity: 0.8,
 

@@ -21,8 +21,10 @@ import axios from 'axios';
 
 import { alpha, styled } from '@mui/material/styles';
 const useStyles = makeStyles(theme => ({
-	root: {
-		maxHeight: "10%"
+	list: {
+		height: "8%",
+		maxHeight: "10%",
+		minHeight: "5%"
 	}
 }))
 const regex = new RegExp('^/(project|createCard)/[0-9]+(/[0-9]+)?$');
@@ -128,8 +130,10 @@ export const Sidebar = (props) => {
 				bgcolor: 'background.paper',
 				display: 'flex',
 				flexDirection: 'column',
-				border: '2px solid black',
-				height: '100%'
+				zIndex: 1,
+				height: '100%',
+				maxHeight: "100%",
+				boxShadow: "2px 2px 2px 2px rgba(14, 15, 18, 0.15)"
 			}}
 			component="nav"
 			aria-labelledby="nested-list-subheader"
@@ -140,13 +144,13 @@ export const Sidebar = (props) => {
 			}
 		>
 			<ListItemButton
-				className={classes.root}
+				className={classes.list}
 				onClick={() => {
 					props.history.push('/dashboard');
 					setactiveItem({ 'temp': 'DashBoard' });
 				}}
 
-				className={classes.root}
+				className={classes.list}
 			>
 				<ListItemText primary="Dashboard" />
 			</ListItemButton>
@@ -156,12 +160,12 @@ export const Sidebar = (props) => {
 					setactiveItem({ 'temp': 'Assigned Cards' });
 
 				}}
-				className={classes.root}
+				className={classes.list}
 
 			>
 				<ListItemText primary="Assigned Cards" />
 			</ListItemButton>
-			<ListItemButton onClick={handleClick} className={classes.root}>
+			<ListItemButton onClick={handleClick} className={classes.list}>
 				<ListItemIcon>
 					<AccountTreeIcon />
 				</ListItemIcon>
@@ -186,7 +190,7 @@ export const Sidebar = (props) => {
 				onClick={() => {
 					props.history.push('/createProject');
 				}}
-				className={classes.root}
+				className={classes.list}
 			>
 				<ListItemText primary="Create New Project" />
 			</ListItemButton> : null}
@@ -196,7 +200,7 @@ export const Sidebar = (props) => {
 				onClick={() => {
 					props.history.push('/members');
 				}}
-				className={classes.root}
+				className={classes.list}
 			>
 				<ListItemText primary="All Users" />
 			</ListItemButton> :
@@ -207,7 +211,7 @@ export const Sidebar = (props) => {
 						await props.otherUserView();
 						props.history.push('/dashboard');
 					}}
-					className={classes.root}
+					className={classes.list}
 				>
 					<ListItemText primary="Your Profile" />
 				</ListItemButton>}
@@ -226,7 +230,7 @@ export const Sidebar = (props) => {
 				}}
 				variant="contained"
 				sx={{ marginTop: "auto" }}
-				className={classes.root}
+				className={classes.list}
 			>
 				<Divider />
 				<ListItemIcon>

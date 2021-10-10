@@ -26,9 +26,8 @@ export const ProjectTemplate = (props) => {
 			bgcolor: 'background.paper',
 			position: 'relative',
 			overflow: 'auto',
-			maxHeight: 300,
-			'& ul': { padding: 0 },
-		}}>
+			maxHeight: 200,
+		}} disablePadding>
 			{props.projects.length === 0 ? (
 				'No projects to display'
 			) : (
