@@ -90,7 +90,25 @@ function Members(props) {
                         }}>
                             View Projects
                         </Button>
-                        <IconButton color="info" children={user.is_staff ? (props.user.is_superuser ? <PersonAddDisabledIcon /> : null) : <PersonAddDisabledIcon />} disabled={!(user.is_staff || user.is_superuser)}>
+                        <IconButton color="info" children={user.is_staff ? (props.user.is_superuser ? <PersonAddDisabledIcon /> : null) : <PersonAddDisabledIcon />} disabled={!(user.is_staff || user.is_superuser)} onClick={
+                            () => {
+                                let data = {
+                                    "is_staff": user.is_staff,
+                                    "is_superuser": user.is_superuser,
+                                    "is_active": !user.is_active,
+                                    "email": user.email
+                                }
+                                props.axiosInstance
+                                    .put("http://127.0.0.1:8000/trelloAPIs/user/" + user.id + "/", data, { withCredentials: true })
+                                    .then(res => {
+                                        console.log("user disabled successfully");
+                                    })
+                                    .catch(err => {
+                                        alert(err);
+                                        console.log(err);
+                                    })
+                            }
+                        }>
 
                         </IconButton>
                     </ListItem>
