@@ -31,7 +31,9 @@
         "react-scripts": "^4.0.3",
         "universal-cookie": "^4.0.4",
         "use-state-if-mounted": "^1.0.4",
-        "web-vitals": "^1.1.2"
+        "web-vitals": "^1.1.2",
+        "websocket": "^1.0.34",
+        "websockets": "^0.2.0"
     },
     "scripts": {
         "start": "react-scripts start",
