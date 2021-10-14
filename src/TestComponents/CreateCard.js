@@ -13,6 +13,7 @@ import Cookies from "universal-cookie";
 import { useHistory } from "react-router";
 import { ButtonGroup } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import "./ckeditor.css";
 import {
   DialogTitle,
   DialogActions,
@@ -27,6 +28,7 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { copyFileSync } from "fs";
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const cookies = new Cookies();
@@ -43,7 +45,6 @@ const MenuProps = {
 };
 
 export const CreateCard = (props) => {
-  console.log("git issue");
   // const [card, setcard] = useState({"card_list"})
   const [title, setTitle] = useState("");
   const [errorTitle, setErrorTitle] = useState(false);
@@ -58,6 +59,7 @@ export const CreateCard = (props) => {
   const [open, setOpen] = useState(false);
   // created_by, list
   const [errorassign, setErrorAssign] = useState(false);
+  let csrftoken = null;
   const history = useHistory();
   const checkEdit = (mems) => {
     console.log("Ia m checkEdit", props.edit, props.card);
@@ -151,12 +153,24 @@ export const CreateCard = (props) => {
     props.getUser();
   }, []);
 
-  const deleteCard = (e) => {
+  const deleteCard = async (e) => {
     handleClose();
     props.handleClose();
+    csrftoken = await axios
+      .get("http://127.0.0.1:8000/trelloAPIs/csrf_token", {
+        withCredentials: true,
+      })
+      .then((res) => res.data["csrftoken"])
+      .catch((err) => {
+        console.log(err);
+      });
+    console.log(csrftoken);
     props.axiosInstance
       .delete("http://127.0.0.1:8000/trelloAPIs/cards/" + props.card.id + "/", {
         withCredentials: true,
+        headers: {
+          "X-CSRFToken": csrftoken,
+        },
       })
       .then((res) => {
         console.log("Card deleted successsfully");
@@ -177,7 +191,7 @@ export const CreateCard = (props) => {
     let assign_list = values.map((item) => item.id);
     setAssigned_to(assign_list);
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (title === "") {
       setErrorMsg("Required");
@@ -195,15 +209,26 @@ export const CreateCard = (props) => {
         descp: descp,
         due_date: datetime,
       };
-
-      if (cookies.get("csrftoken") === undefined) {
+      console.log("came here before getting csrftoken");
+      csrftoken = await axios
+        .get("http://127.0.0.1:8000/trelloAPIs/csrf_token", {
+          withCredentials: true,
+        })
+        .then((res) => {
+          console.log(res.data);
+          return res.data["csrftoken"];
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      if (csrftoken === undefined) {
         alert("Logout and re-authorize :|");
       }
       if (!props.edit) {
         props.axiosInstance
           .post("http://127.0.0.1:8000/trelloAPIs/cards/", data, {
             headers: {
-              "X-CSRFToken": cookies.get("csrftoken"),
+              "X-CSRFToken": csrftoken,
               "Content-Type": "application/json",
               "X-Requested-With": "XMLHttpRequest",
             },
@@ -216,14 +241,14 @@ export const CreateCard = (props) => {
           });
       } else {
         data.cards_list = props.card["cards_list"];
-        console.log("csrftoken", cookies.get("csrftoken"), data);
+        console.log("csrftoken", csrftoken, data);
         props.axiosInstance
           .put(
             "http://127.0.0.1:8000/trelloAPIs/cards/" + props.card.id + "/",
             data,
             {
               headers: {
-                "X-CSRFToken": cookies.get("csrftoken"),
+                "X-CSRFToken": csrftoken,
                 "Content-Type": "application/json",
                 "X-Requested-With": "XMLHttpRequest",
               },
@@ -289,7 +314,6 @@ export const CreateCard = (props) => {
             console.log({ event, editor, data });
           }}
           data={descp}
-          config={{ width: 400 }}
         />
         <TextField
           id="datetime-local"

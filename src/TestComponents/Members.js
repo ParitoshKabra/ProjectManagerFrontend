@@ -13,7 +13,8 @@ import { red } from "@mui/material/colors";
 import { makeStyles } from "@mui/styles";
 import axios from "axios";
 import { Container } from "@mui/material";
-import PersonAddDisabledIcon from "@mui/icons-material/PersonAddDisabled";
+import PersonOffIcon from "@mui/icons-material/PersonOff";
+import PersonIcon from "@mui/icons-material/Person";
 const useStyles = makeStyles((theme) => ({
   member: {
     border: "2px solid #dde0eb",
@@ -29,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Members(props) {
   const [users, setUsers] = React.useState([]);
+  let csrftoken = null;
   React.useEffect(() => {
     getMembers();
   }, []);
@@ -87,6 +89,50 @@ function Members(props) {
               icon={<AccountCircleIcon />}
               checkedIcon={<AdminPanelSettingsIcon />}
               checked={user.is_staff || user.is_superuser}
+              onClick={async (e) => {
+                if (
+                  props.user.id === user.id ||
+                  !(props.user.is_staff || props.user.is_superuser)
+                ) {
+                  return;
+                }
+                let data = {
+                  is_staff: !user.is_staff,
+                  is_superuser: user.is_superuser,
+                  is_active: user.is_active,
+                  email: user.email,
+                };
+                csrftoken = await axios
+                  .get("http://127.0.0.1:8000/trelloAPIs/csrf_token", {
+                    withCredentials: true,
+                  })
+                  .then((res) => res.data["csrftoken"])
+                  .catch((err) => {
+                    console.log(err);
+                  });
+                console.log(csrftoken);
+                props.axiosInstance
+                  .put(
+                    "http://127.0.0.1:8000/trelloAPIs/user/" + user.id + "/",
+                    data,
+                    {
+                      withCredentials: true,
+                      headers: {
+                        "X-CSRFToken": csrftoken,
+                        "Content-Type": "application/json",
+                        "X-Requested-With": "XMLHttpRequest",
+                      },
+                    }
+                  )
+                  .then((res) => {
+                    console.log("user status changed successfully");
+                    getMembers();
+                  })
+                  .catch((err) => {
+                    alert(err);
+                    console.log(err);
+                  });
+              }}
             />
           </ListItem>
           <Divider />
@@ -111,28 +157,59 @@ function Members(props) {
               children={
                 user.is_staff ? (
                   props.user.is_superuser ? (
-                    <PersonAddDisabledIcon />
+                    !user.is_active ? (
+                      <PersonOffIcon />
+                    ) : (
+                      <PersonIcon />
+                    )
                   ) : null
+                ) : !user.is_active ? (
+                  <PersonOffIcon />
                 ) : (
-                  <PersonAddDisabledIcon />
+                  <PersonIcon />
                 )
               }
-              disabled={!(user.is_staff || user.is_superuser)}
-              onClick={() => {
+              disabled={!(props.user.is_staff || props.user.is_superuser)}
+              onClick={async () => {
+                if (props.user.id === user.id) {
+                  return;
+                }
+                if (user.is_staff || user.is_superuser) {
+                  if (!props.user.is_superuser) {
+                    return;
+                  }
+                }
                 let data = {
                   is_staff: user.is_staff,
                   is_superuser: user.is_superuser,
                   is_active: !user.is_active,
                   email: user.email,
                 };
+                csrftoken = await axios
+                  .get("http://127.0.0.1:8000/trelloAPIs/csrf_token", {
+                    withCredentials: true,
+                  })
+                  .then((res) => res.data["csrftoken"])
+                  .catch((err) => {
+                    console.log(err);
+                  });
+                console.log(csrftoken);
                 props.axiosInstance
                   .put(
                     "http://127.0.0.1:8000/trelloAPIs/user/" + user.id + "/",
                     data,
-                    { withCredentials: true }
+                    {
+                      withCredentials: true,
+                      headers: {
+                        "X-CSRFToken": csrftoken,
+                        "Content-Type": "application/json",
+                        "X-Requested-With": "XMLHttpRequest",
+                      },
+                    }
                   )
                   .then((res) => {
                     console.log("user disabled successfully");
+                    getMembers();
                   })
                   .catch((err) => {
                     alert(err);
@@ -148,3 +225,4 @@ function Members(props) {
 }
 
 export default Members;
+// warning on enable or disable of an user.
