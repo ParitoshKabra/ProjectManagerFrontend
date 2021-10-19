@@ -1,0 +1,18 @@
+user lost on refresh
+issue with deleting a comment
+login page still rendered and not changed to dashboard
+
+
+// custom styling practices in material-ui
+
+theme overrides, styled components, scrollbar
+
+// app bar ki list jaise comments banano
+// accordion for description
+// use paper for elevation and theming
+// avatar chips for assinged members
+
+later-->speed-dials// tabs, scrollbars
+
+// cards within a list needs to be displayed with elevations
+// tooltip in place of "card title and project and all"

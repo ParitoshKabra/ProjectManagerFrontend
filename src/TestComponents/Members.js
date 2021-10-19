@@ -58,7 +58,7 @@ function Members(props) {
       }}
     >
       {users.map((user) => (
-        <Container className={classes.member}>
+        <Container className={classes.member} key={user.id}>
           <ListItem alignItems="flex-start">
             <ListItemAvatar>
               <Avatar sx={{ bgcolor: red[500] }} aria-label="card">
@@ -145,8 +145,10 @@ function Members(props) {
               onClick={async () => {
                 if (user.id !== props.user.id) {
                   await props.otherUserView(user.id);
+                  props.history.push("/dashboard/" + "user/" + user.id);
+                } else {
+                  props.history.push("/dashboard");
                 }
-                props.history.push("/dashboard");
               }}
               className={classes.btn}
             >
@@ -208,7 +210,6 @@ function Members(props) {
                     }
                   )
                   .then((res) => {
-                    console.log("user disabled successfully");
                     getMembers();
                   })
                   .catch((err) => {
@@ -226,3 +227,4 @@ function Members(props) {
 
 export default Members;
 // warning on enable or disable of an user.
+// disbaled listItem

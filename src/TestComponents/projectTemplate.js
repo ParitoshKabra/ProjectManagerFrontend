@@ -38,8 +38,9 @@ export const ProjectTemplate = (props) => {
                 className={
                   project.id === props.activeProject.id ? classes.standard : ""
                 }
+                key={project.id}
               >
-                <Project {...props} project={project} key={project.id} />
+                <Project {...props} project={project} />
               </ListItem>
             );
           })}

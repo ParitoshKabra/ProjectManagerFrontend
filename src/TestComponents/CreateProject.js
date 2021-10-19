@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField } from "@material-ui/core";
+import TextField from "@mui/material/TextField";
 import { Box } from "@mui/material";
 import { useState, useEffect } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
@@ -25,9 +25,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/core";
-import { Container } from "@material-ui/core";
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
+
+import Container from "@mui/material/Container";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;

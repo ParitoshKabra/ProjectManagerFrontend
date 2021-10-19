@@ -117,7 +117,11 @@ export const MyList = (props) => {
     setCardUnderEdit(card);
   };
   const ViewCard = (id) => {
-    props.history.push(`/project/${props.project.id}/${id}`);
+    !props.isDiffUser
+      ? props.history.push(`/project/${props.project.id}/${id}`)
+      : props.history.push(
+          `/project/user/${props.diffUser.id}/${props.project.id}/${id}`
+        );
   };
 
   const handleClose = () => {

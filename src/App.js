@@ -93,10 +93,21 @@ export default class App extends React.Component {
   }
   async componentDidMount() {
     console.log("DidMount called");
+    const regex = new RegExp("^/(cards|dashboard)/user/([0-9]+)?$");
+    const regex1 = new RegExp(
+      "^/(project|createCard)/user/[0-9]+/[0-9]+/[0-9]+/?$"
+    );
+    const regex2 = new RegExp("^/project/user/[0-9]+/[0-9]+");
+
     await this.checkLoginStatus();
     console.log("Execution of Login Didmount done", this.state.loggedin);
     await this.getUser();
     this.setState({ done: true });
+    let refresh = window.location.pathname;
+    console.log(refresh, refresh.split("/")[3]);
+    if (regex.test(refresh) || regex1.test(refresh) || regex2.test(refresh)) {
+      await this.otherUserView(refresh.split("/")[3]);
+    }
   }
   async otherUserView(id) {
     if (!this.state.isDiffUser) {
@@ -173,7 +184,7 @@ export default class App extends React.Component {
                 />
                 <Route
                   exact
-                  path="/dashboard"
+                  path={["(/dashboard|/dashboard/user/[0-9]+/?)"]}
                   render={(props) => {
                     return (
                       <Welcome
@@ -191,7 +202,7 @@ export default class App extends React.Component {
                 />
                 <Route
                   exact
-                  path="/cards"
+                  path={["(/cards|/cards/user/[0-9]+/?)"]}
                   render={(props) => {
                     return (
                       <AssignedCards
@@ -209,8 +220,29 @@ export default class App extends React.Component {
                 />
                 <Route
                   exact
-                  path="/project/:id"
+                  path={"/project/:id"}
                   render={(props) => {
+                    return (
+                      <ListProject
+                        {...props}
+                        loginStatus={this.state.loggedin}
+                        checkLoginStatus={this.checkLoginStatus}
+                        user={this.state.user}
+                        getUser={this.getUser}
+                        done={this.state.done}
+                        axiosInstance={axiosInstance}
+                        isDiffUser={this.state.isDiffUser}
+                        diffUser={this.state.diffUser}
+                        otherUserView={this.otherUserView}
+                      />
+                    );
+                  }}
+                />
+                <Route
+                  exact
+                  path="/project/user/:userId/:id"
+                  render={(props) => {
+                    console.log(props);
                     return (
                       <ListProject
                         {...props}
@@ -283,7 +315,26 @@ export default class App extends React.Component {
                 />
                 <Route
                   exact
-                  path="/project/:projectId/:cardId"
+                  path={"/project/:projectId/:cardId"}
+                  render={(props) => {
+                    return (
+                      <MyCard
+                        {...props}
+                        user={this.state.user}
+                        axiosInstance={axiosInstance}
+                        loginStatus={this.state.loggedin}
+                        getUser={this.getUser}
+                        done={this.state.done}
+                        isDiffUser={this.state.isDiffUser}
+                        diffUser={this.state.diffUser}
+                        otherUserView={this.otherUserView}
+                      />
+                    );
+                  }}
+                />
+                <Route
+                  exact
+                  path={"/project/user/:userId/:projectId/:cardId"}
                   render={(props) => {
                     return (
                       <MyCard

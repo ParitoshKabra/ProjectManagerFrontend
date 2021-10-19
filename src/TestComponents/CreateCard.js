@@ -28,7 +28,8 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { copyFileSync } from "fs";
+import Moment from "react-moment";
+import moment from "moment";
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const cookies = new Cookies();
@@ -52,7 +53,9 @@ export const CreateCard = (props) => {
   const [alertMsg, setAlertMsg] = useState("");
   const [alert1, setAlert] = useState(false);
   const [descp, setDescp] = useState("none");
-  const [datetime, setDateTime] = useState(new Date().toISOString());
+  const [datetime, setDateTime] = useState(
+    moment(new Date()).add(5, "days").format("YYYY-MM-DDTHH:mm")
+  );
   const [assigned_to, setAssigned_to] = useState([]);
   const [members, setMembers] = useState([]);
   const [editMembers, setEditMembers] = useState([]);
@@ -68,7 +71,9 @@ export const CreateCard = (props) => {
       setTitle(props.card["title"]);
       setDescp(props.card["descp"]);
       setAssigned_to(props.card["assigned_to"]);
-      setDateTime(props.card["due_date"]);
+      let date_ = moment(props.card["due_date"]).format("YYYY-MM-DDTHH:mm");
+      console.log(date_);
+      setDateTime(date_);
       if (mems !== undefined) {
         let array = [];
         props.card["assigned_to"].forEach((elem) => {

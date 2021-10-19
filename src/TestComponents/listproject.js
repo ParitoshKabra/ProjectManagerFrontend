@@ -8,7 +8,7 @@ import { MyList } from "./list";
 import { Grid } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { Typography, Container } from "@mui/material";
-import { withStyles } from "@material-ui/core";
+import { withStyles } from "@mui/styles";
 import IconButton from "@mui/material/IconButton";
 import PeopleIcon from "@mui/icons-material/People";
 import Switch from "@mui/material/Switch";
@@ -20,7 +20,7 @@ import {
   Dialog,
   DialogContent,
   DialogContentText,
-} from "@material-ui/core";
+} from "@mui/material/";
 import MakeAdmin from "./MakeAdmin";
 
 const createDOMPurify = require("dompurify");
@@ -30,10 +30,12 @@ const DOMPurify = createDOMPurify(window);
 //
 const styles = (theme) => ({
   btn: {
-    borderRadius: "100%",
-    width: "60px",
-    height: "60px",
-    margin: "10px 10px",
+    "&.MuiButtonBase-root.MuiButton-root": {
+      borderRadius: "100%",
+      width: "60px",
+      height: "60px",
+      margin: "10px 5px",
+    },
   },
   btnGrp: {
     display: "flex",
@@ -161,34 +163,36 @@ class ListProject extends React.Component {
                 </Button>
               </div>
             </Container>
-            <Dialog
-              onClose={this.handleCloseProjectEdit}
-              open={this.state.editProject}
-              style={{ minWidth: 450, maxWidth: 600 }}
-            >
-              <DialogTitle>Edit Project</DialogTitle>
-              <DialogContent>
-                <CreateProject
-                  {...this.props}
-                  edit={this.state.editProject}
-                  project={this.state.projectContent}
-                  handleClose={this.handleCloseProjectEdit}
-                ></CreateProject>
-              </DialogContent>
-            </Dialog>
-            <Dialog
-              onClose={this.handleCloseMakeAdmin}
-              open={this.state.editAdmin}
-            >
-              <DialogContent>
-                <MakeAdmin
-                  {...this.props}
-                  edit={this.state.editAdmin}
-                  project={this.state.projectContent}
-                  handleClose={this.handleCloseMakeAdmin}
-                ></MakeAdmin>
-              </DialogContent>
-            </Dialog>
+            <Container>
+              <Dialog
+                onClose={this.handleCloseProjectEdit}
+                open={this.state.editProject}
+                style={{ minWidth: 450, maxWidth: 600 }}
+              >
+                <DialogTitle>Edit Project</DialogTitle>
+                <DialogContent>
+                  <CreateProject
+                    {...this.props}
+                    edit={this.state.editProject}
+                    project={this.state.projectContent}
+                    handleClose={this.handleCloseProjectEdit}
+                  ></CreateProject>
+                </DialogContent>
+              </Dialog>
+              <Dialog
+                onClose={this.handleCloseMakeAdmin}
+                open={this.state.editAdmin}
+              >
+                <DialogContent>
+                  <MakeAdmin
+                    {...this.props}
+                    edit={this.state.editAdmin}
+                    project={this.state.projectContent}
+                    handleClose={this.handleCloseMakeAdmin}
+                  ></MakeAdmin>
+                </DialogContent>
+              </Dialog>
+            </Container>
           </React.Fragment>
         );
       } else {

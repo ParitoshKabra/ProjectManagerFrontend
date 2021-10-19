@@ -8,6 +8,7 @@ import Collapse from "@mui/material/Collapse";
 import CloseIcon from "@mui/icons-material/Close";
 import { AlertTitle } from "@mui/material";
 import { Button } from "@mui/material";
+import Snackbar from "@mui/material/Snackbar";
 import axios from "axios";
 const ariaLabel = { "aria-label": "description" };
 
@@ -27,41 +28,30 @@ export const MyAlert = ({
   }, []);
   const [open, setOpen] = useState(true);
   return (
-    <Box sx={{ width: "100%" }}>
-      <Collapse in={open}>
-        <Alert
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => {
-                setOpen(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-          severity={TitleMsg}
-          sx={{ mb: 2 }}
-        >
-          <AlertTitle>{!DiffUser ? TitleMsg : "Error"}</AlertTitle>
-          {!DiffUser
-            ? TitleDetail
-            : "Go back to your account to create a list"}{" "}
-          — <strong>check it out!</strong>
-        </Alert>
-      </Collapse>
-      <Button
-        disabled={open}
-        variant="outlined"
-        onClick={() => {
-          setOpen(true);
-        }}
+    <Snackbar open={open}>
+      <Alert
+        action={
+          <IconButton
+            aria-label="close"
+            color="inherit"
+            size="small"
+            onClick={() => {
+              setOpen(false);
+            }}
+          >
+            <CloseIcon fontSize="inherit" />
+          </IconButton>
+        }
+        severity={TitleMsg}
+        sx={{ mb: 2 }}
       >
-        Re-open
-      </Button>
-    </Box>
+        <AlertTitle>{!DiffUser ? TitleMsg : "Error"}</AlertTitle>
+        {!DiffUser
+          ? TitleDetail
+          : "Go back to your account to create a list"} —{" "}
+        <strong>check it out!</strong>
+      </Alert>
+    </Snackbar>
   );
 };
 
