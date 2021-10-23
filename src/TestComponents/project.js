@@ -17,7 +17,7 @@ export const Project = (props) => {
     <ListItemButton
       variant="contained"
       color="primary"
-      style={{ width: "200px", margin: "1px 0" }}
+      style={{ margin: "1px 0" }}
       onClick={renderLists}
     >
       <ListItemText primary={props.project.title} />

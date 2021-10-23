@@ -236,9 +236,6 @@ export const Sidebar = (props) => {
   );
 };
 
-// cOME BACK TO SAME USER
-// delete comment
-
 // login page
 // comments itna bada nahi rakhna
 // popovers

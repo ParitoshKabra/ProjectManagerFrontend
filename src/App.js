@@ -165,7 +165,17 @@ export default class App extends React.Component {
                 }}
               />
             </Grid>
-            <Grid item sm={9} sx={{ maxHeight: "100%", overflow: "auto" }}>
+            <Grid
+              item
+              sm={9}
+              sx={{
+                maxHeight: "100%",
+                height: "100%",
+                overflowX: "hidden",
+                overflowY: "scroll",
+                position: "relative !important",
+              }}
+            >
               <Switch>
                 <Route
                   exact
@@ -418,7 +428,3 @@ export default class App extends React.Component {
       });
   };
 }
-// How to give dynamic path in router
-// how to go to the path if loggedin after refresh
-// Main Components : Modify/Delete request on cards, lists
-// create a new project and edit a project pe do a quick fix to render changes into the sidebar

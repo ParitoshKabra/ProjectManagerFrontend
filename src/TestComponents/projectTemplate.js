@@ -20,7 +20,6 @@ export const ProjectTemplate = (props) => {
     <List
       component={"div"}
       sx={{
-        width: "100%",
         maxWidth: 360,
         bgcolor: "background.paper",
         position: "relative",
@@ -32,18 +31,18 @@ export const ProjectTemplate = (props) => {
       {props.projects.length === 0
         ? "No projects to display"
         : props.projects.map((project) => {
-            return (
-              <ListItem
-                sx={{ pl: 4 }}
-                className={
-                  project.id === props.activeProject.id ? classes.standard : ""
-                }
-                key={project.id}
-              >
-                <Project {...props} project={project} />
-              </ListItem>
-            );
-          })}
+          return (
+            <ListItem
+              sx={{ pl: 4 }}
+              className={
+                project.id === props.activeProject.id ? classes.standard : ""
+              }
+              key={project.id}
+            >
+              <Project {...props} project={project} />
+            </ListItem>
+          );
+        })}
     </List>
   );
 };

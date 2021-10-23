@@ -40,10 +40,13 @@ const styles = (theme) => ({
   btnGrp: {
     display: "flex",
     justifyContent: "flex-end",
+    width: "95%",
   },
   container: {
     // display: "flex",
     // flexDirection: "column",
+    position: "relative",
+    height: "100%",
   },
 });
 class ListProject extends React.Component {
@@ -95,7 +98,7 @@ class ListProject extends React.Component {
       if (this.state.projectContent) {
         return (
           <React.Fragment>
-            <Container>
+            <Container className={classes.container}>
               <Container
                 sx={{
                   display: "flex",
@@ -163,36 +166,39 @@ class ListProject extends React.Component {
                 </Button>
               </div>
             </Container>
-            <Container>
-              <Dialog
-                onClose={this.handleCloseProjectEdit}
-                open={this.state.editProject}
-                style={{ minWidth: 450, maxWidth: 600 }}
-              >
-                <DialogTitle>Edit Project</DialogTitle>
-                <DialogContent>
-                  <CreateProject
-                    {...this.props}
-                    edit={this.state.editProject}
-                    project={this.state.projectContent}
-                    handleClose={this.handleCloseProjectEdit}
-                  ></CreateProject>
-                </DialogContent>
-              </Dialog>
-              <Dialog
-                onClose={this.handleCloseMakeAdmin}
-                open={this.state.editAdmin}
-              >
-                <DialogContent>
-                  <MakeAdmin
-                    {...this.props}
-                    edit={this.state.editAdmin}
-                    project={this.state.projectContent}
-                    handleClose={this.handleCloseMakeAdmin}
-                  ></MakeAdmin>
-                </DialogContent>
-              </Dialog>
-            </Container>
+            <Dialog
+              onClose={this.handleCloseProjectEdit}
+              open={this.state.editProject}
+              style={{ minWidth: 450, maxWidth: 600 }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <DialogTitle>Edit Project</DialogTitle>
+              <DialogContent>
+                <CreateProject
+                  {...this.props}
+                  edit={this.state.editProject}
+                  project={this.state.projectContent}
+                  handleClose={this.handleCloseProjectEdit}
+                ></CreateProject>
+              </DialogContent>
+            </Dialog>
+            <Dialog
+              onClose={this.handleCloseMakeAdmin}
+              open={this.state.editAdmin}
+            >
+              <DialogContent>
+                <MakeAdmin
+                  {...this.props}
+                  edit={this.state.editAdmin}
+                  project={this.state.projectContent}
+                  handleClose={this.handleCloseMakeAdmin}
+                ></MakeAdmin>
+              </DialogContent>
+            </Dialog>
           </React.Fragment>
         );
       } else {

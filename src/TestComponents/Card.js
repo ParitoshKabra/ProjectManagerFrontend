@@ -5,14 +5,15 @@ import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
+import Avatar from "@mui/material/Avatar";
+import Chip from "@mui/material/Chip";
 import { Divider } from "@material-ui/core";
 import CardActions from "@mui/material/CardActions";
 import Collapse from "@mui/material/Collapse";
-import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
-
+import List from "@mui/material/List";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Moment from "react-moment";
 import { Button } from "@material-ui/core";
@@ -26,8 +27,11 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
 import Menu from "@mui/material/Menu";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import ListItem from "@mui/material/ListItem";
 import { makeStyles } from "@mui/styles";
-
+import Paper from "@mui/material/Paper";
+import moment from "moment";
 const createDOMPurify = require("dompurify");
 
 const DOMPurify = createDOMPurify(window);
@@ -66,18 +70,15 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   cardSent: {
-    "&.MuiPaper-root.MuiCard-root": {
+    "&.MuiList-root": {
       margin: "10px",
       marginLeft: "auto",
-      maxWidth: "345px",
-      backgroundColor: "#84f5c2",
     },
   },
   cardNormal: {
-    "&.MuiPaper-root.MuiCard-root": {
+    "&.MuiList-root": {
       margin: "10px",
       marginRight: "auto",
-      maxWidth: "345px",
     },
   },
   menu: {
@@ -117,16 +118,20 @@ function MyCard(props) {
   const editor_ = React.useRef(null);
   const [comment, setComment] = useState("");
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [testOpen, setTestOpen] = React.useState(-1);
   const open = Boolean(anchorEl);
-  const handleCommentClick = (event) => {
+  const handleCommentClick = (event, id) => {
     setAnchorEl(event.currentTarget);
+    setTestOpen(id);
   };
   const handleCommentClose = (e) => {
     setAnchorEl(null);
     setUpdateComment({});
+    setTestOpen(-1);
   };
   const handleCommentCloseOnDelete = async (id) => {
     setAnchorEl(null);
+    setTestOpen(-1);
     console.log("when deleting: ", id);
     let csrftoken = await axios
       .get("http://127.0.0.1:8000/trelloAPIs/csrf_token", {
@@ -291,12 +296,13 @@ function MyCard(props) {
   if (props.loginStatus) {
     let cmnts, members_assigned;
     if (card.hasOwnProperty("comments_in_card")) {
-      console.log("comments after", card.comments_in_card);
       cmnts = card.comments_in_card.map((cmnt, index) => {
         let sent =
           cmnt.commented_by.id === props.user.id
             ? classes.cardSent
             : classes.cardNormal;
+        let currTime = moment(new Date());
+        let cmnt_tym = moment(cmnt.comment_tym);
         let updated;
         if (Object.keys(updateComment).length !== 0) {
           updated = updateComment.id === cmnt.id ? classes.cmntEdit : "";
@@ -305,15 +311,62 @@ function MyCard(props) {
         }
         const cmnt_classes = `${sent} ${updated}`;
         return (
-          <Card className={cmnt_classes} key={index.toString()}>
-            <CardHeader
-              avatar={
-                <Avatar sx={{ bgcolor: red[500] }} aria-label="card">
-                  {cmnt.commented_by.username[0]}
-                </Avatar>
-              }
-              action={
-                props.user.id === cmnt.commented_by.id ? (
+          <Paper
+            elevation={4}
+            sx={{
+              backgroundColor: `${
+                cmnt.commented_by.id === props.user.id ? "#84f5c2" : "white"
+              }`,
+              width: "50%",
+              marginLeft: `${
+                cmnt.commented_by.id === props.user.id ? "auto" : ""
+              }`,
+            }}
+          >
+            <List className={cmnt_classes} key={index.toString()}>
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar>
+                  <Avatar sx={{ bgcolor: "#f50057" }}>
+                    {cmnt.commented_by.username.toUpperCase()[0]}
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <React.Fragment>
+                      <Typography
+                        component={"span"}
+                        style={{ fontSize: "16px" }}
+                      >
+                        {cmnt.commented_by.username}
+                      </Typography>
+                      <Typography
+                        variant="span"
+                        color="text.secondary"
+                        style={{ marginLeft: "10px", fontSize: "14px" }}
+                      >
+                        {currTime.diff(cmnt_tym, "days") < 1 ? (
+                          moment(cmnt.comment_tym).fromNow()
+                        ) : (
+                          <Moment format="MMMM Do YYYY, h:mm a">
+                            {cmnt_tym}
+                          </Moment>
+                        )}
+                      </Typography>
+                    </React.Fragment>
+                  }
+                  secondary={
+                    <React.Fragment>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(cmnt.comment),
+                        }}
+                      ></Typography>
+                    </React.Fragment>
+                  }
+                />
+                {props.user.id === cmnt.commented_by.id ? (
                   <React.Fragment>
                     <IconButton
                       aria-label="more"
@@ -322,19 +375,15 @@ function MyCard(props) {
                       aria-expanded={open ? "true" : undefined}
                       aria-haspopup="true"
                       onClick={(e) => {
-                        console.log(cmnt.id, cmnt.comment);
-                        handleCommentClick(e);
+                        handleCommentClick(e, cmnt.id);
                       }}
                     >
                       <MoreVertIcon />
                     </IconButton>
                     <Menu
                       id="long-menu"
-                      MenuListProps={{
-                        "aria-labelledby": "long-button",
-                      }}
                       anchorEl={anchorEl}
-                      open={open}
+                      open={cmnt.id === testOpen}
                       onClose={(e) => {
                         console.log(
                           "closing comment menu",
@@ -371,12 +420,12 @@ function MyCard(props) {
                       </ListItemButton>
                       <ListItemButton
                         onClick={() => {
+                          setAnchorEl(null);
+                          setTestOpen(-1);
                           setUpdateComment(cmnt);
                           console.log(editor_.current);
                           console.log(cmnt.comment, cmnt.id);
-                          // editor_.current.focus();
                           window.scrollTo(0, editor_.current.offsetTop);
-                          setAnchorEl(null);
                         }}
                         className={classes.listbtn}
                       >
@@ -384,50 +433,42 @@ function MyCard(props) {
                       </ListItemButton>
                     </Menu>
                   </React.Fragment>
-                ) : null
-              }
-              title={cmnt.commented_by.username + cmnt.id}
-            />
-            <CardContent>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(cmnt.comment),
-                }}
-              ></Typography>
-            </CardContent>
-            <CardContent>
-              <Typography variant="body2" color="text.secondary">
-                <Moment format="MMMM Do YYYY, h:mm a">
-                  {cmnt.comment_tym}
-                </Moment>
-              </Typography>
-            </CardContent>
-          </Card>
+                ) : null}
+              </ListItem>
+            </List>
+          </Paper>
         );
       });
     }
     if (card.hasOwnProperty("assigned_to")) {
       members_assigned = card["assigned_to"].map((mem) => {
         return (
-          <Button
-            variant="contained"
-            rounded={true}
-            size="small"
-            className={classes.memBtn}
-          >
-            <Avatar sx={{ bgcolor: "#f50057", width: 30, height: 30 }}>
-              {mem.username.toUpperCase()[0]}
-            </Avatar>
-            <Typography
-              sx={{ fontSize: 12, marginBottom: 0, marginLeft: "5px" }}
-              paragraph
-              color="text.secondary"
-            >
-              {mem.username}
-            </Typography>
-          </Button>
+          // <Button
+          //   variant="contained"
+          //   rounded={true}
+          //   size="small"
+          //   className={classes.memBtn}
+          // >
+          //   <Avatar sx={{ bgcolor: "#f50057", width: 30, height: 30 }}>
+          //     {mem.username.toUpperCase()[0]}
+          //   </Avatar>
+          //   <Typography
+          //     sx={{ fontSize: 12, marginBottom: 0, marginLeft: "5px" }}
+          //     paragraph
+          //     color="text.secondary"
+          //   >
+          //     {mem.username}
+          //   </Typography>
+          // </Button>
+          <Chip
+            avatar={
+              <Avatar sx={{ bgcolor: red[500] }}>
+                {mem.username.toUpperCase()[0]}
+              </Avatar>
+            }
+            label={mem.username}
+            variant="outlined"
+          />
         );
       });
     }
@@ -488,7 +529,7 @@ function MyCard(props) {
         </Grow>
 
         <Divider />
-        <CardActions disableSpacing>
+        <CardActions disableSpacing sx={{ paddingLeft: "16px" }}>
           <ExpandMore
             expand={expanded}
             onClick={handleExpandClick}
@@ -517,7 +558,7 @@ function MyCard(props) {
                 onChange={(event, editor) => {
                   const data = editor.getData();
                   setComment(data);
-                  console.log({ event, editor, data });
+                  console.log(event);
                 }}
                 data={
                   Object.keys(updateComment).length !== 0

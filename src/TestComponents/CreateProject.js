@@ -42,18 +42,23 @@ const MenuProps = {
     },
   },
 };
-const useStyles = makeStyles((theme) => ({
+const useStyles = props => makeStyles((theme) => ({
   container: {
     "&.MuiContainer-root": {
       display: "flex",
-      justifyContent: "space-between",
+      flexDirection: "column",
+      justifyContent: props.edit ? "space-between" : "center",
+      alignItems: "center",
       width: "100%",
+      paddingTop: "10px",
     },
+    btnTest: {
+      border: "2px solid red !important"
+    }
   },
 }));
 // how to render richtext as filled value in CKEditor
 function CreateProject(props) {
-  const classes = useStyles();
   const [title, setTitle] = useState("");
   const [descp, setDescp] = useState("");
   const [members, setMembers] = useState([]);
@@ -62,6 +67,8 @@ function CreateProject(props) {
   const [errorTitleMsg, setErrorTitleMsg] = useState("");
   const [editMembers, setEditMembers] = useState([]);
   const [open, setOpen] = useState(false);
+  const classes = useStyles(props)();
+
   let csrftoken = null;
   const history = useHistory();
   const getRegisteredMembers = async () => {
@@ -214,7 +221,7 @@ function CreateProject(props) {
         noValidate
         autoComplete="off"
       >
-        <React.Fragment>
+        <Container component="div" className={classes.container}>
           <TextField
             id="filled-basic"
             label="Title"
@@ -271,34 +278,41 @@ function CreateProject(props) {
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Checkboxes"
+                label="Members"
                 placeholder="Members..."
               />
             )}
           />
-        </React.Fragment>
-        <Container component="div" className={classes.container}>
-          <Button
-            color="primary"
-            variant="contained"
-            type="submit"
-            onClick={handleSubmit}
-          >
-            {props.edit ? "Update" : "Submit"}
-          </Button>
-          {props.edit ? (
+          <Box
+            sx={{
+              display: "flex",
+              "& > :not(style)": { m: 1, width: "25ch", overflowX: "hidden" },
+            }}>
             <Button
-              color="secondary"
+              color="primary"
               variant="contained"
               type="submit"
-              onClick={(e) => {
-                e.preventDefault();
-                setOpen(true);
-              }}
+              onClick={handleSubmit}
+              className={classes.btnTest}
             >
-              <DeleteIcon />
+              {props.edit ? "Update" : "Submit"}
             </Button>
-          ) : null}
+            {props.edit ? (
+              <Button
+                color="secondary"
+                variant="contained"
+                type="submit"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setOpen(true);
+                }}
+                className={classes.btnTest}
+
+              >
+                <DeleteIcon />
+              </Button>
+            ) : null}
+          </Box>
         </Container>
 
         <Dialog
