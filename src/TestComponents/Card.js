@@ -7,7 +7,7 @@ import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Avatar from "@mui/material/Avatar";
 import Chip from "@mui/material/Chip";
-import { Divider } from "@material-ui/core";
+import Divider from "@mui/material/Divider";
 import CardActions from "@mui/material/CardActions";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -16,7 +16,7 @@ import { red } from "@mui/material/colors";
 import List from "@mui/material/List";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Moment from "react-moment";
-import { Button } from "@material-ui/core";
+import Button from "@mui/material/Button";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { Box } from "@mui/material";
@@ -29,6 +29,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItem from "@mui/material/ListItem";
+import Tooltip from "@mui/material/Tooltip";
 import { makeStyles } from "@mui/styles";
 import Paper from "@mui/material/Paper";
 import moment from "moment";
@@ -92,14 +93,20 @@ const useStyles = makeStyles((theme) => ({
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
+  const classes = useStyles();
   return !expand ? (
-    <Button variant="contained" color="primary" {...other}>
+    <Button
+      variant="contained"
+      color="primary"
+      {...other}
+      className={classes.btn_test}
+    >
       View comments
     </Button>
   ) : (
-    <Button variant="contained" color="primary" {...other}>
+    <IconButton variant="contained" color="primary" {...other}>
       <CancelIcon />
-    </Button>
+    </IconButton>
   );
 })(({ theme, expand }) => ({
   transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
@@ -370,7 +377,7 @@ function MyCard(props) {
                   <React.Fragment>
                     <IconButton
                       aria-label="more"
-                      id="long-button"
+                      id="long-Button"
                       aria-controls="long-menu"
                       aria-expanded={open ? "true" : undefined}
                       aria-haspopup="true"
@@ -443,23 +450,6 @@ function MyCard(props) {
     if (card.hasOwnProperty("assigned_to")) {
       members_assigned = card["assigned_to"].map((mem) => {
         return (
-          // <Button
-          //   variant="contained"
-          //   rounded={true}
-          //   size="small"
-          //   className={classes.memBtn}
-          // >
-          //   <Avatar sx={{ bgcolor: "#f50057", width: 30, height: 30 }}>
-          //     {mem.username.toUpperCase()[0]}
-          //   </Avatar>
-          //   <Typography
-          //     sx={{ fontSize: 12, marginBottom: 0, marginLeft: "5px" }}
-          //     paragraph
-          //     color="text.secondary"
-          //   >
-          //     {mem.username}
-          //   </Typography>
-          // </Button>
           <Chip
             avatar={
               <Avatar sx={{ bgcolor: red[500] }}>
@@ -477,16 +467,11 @@ function MyCard(props) {
       <Card>
         <CardContent sx={{ display: "flex", justifyContent: "space-between" }}>
           <Stack>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
-              Card Title
-            </Typography>
-            <Typography variant="h6" component={"h3"}>
-              {card.title}
-            </Typography>
+            <Tooltip title="title" placement="left-start">
+              <Typography variant="h6" component={"h3"}>
+                {card.title}
+              </Typography>
+            </Tooltip>
           </Stack>
           <Stack>
             <Typography
@@ -592,6 +577,7 @@ function MyCard(props) {
                   }
                   setComment("");
                 }}
+                className={classes.btn_test}
               >
                 save
               </Button>

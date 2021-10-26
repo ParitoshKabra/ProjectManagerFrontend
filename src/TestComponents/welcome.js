@@ -14,6 +14,12 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import Checkbox from "@mui/material/Checkbox";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Tooltip from "@mui/material/Tooltip";
+
 import { Container } from "@mui/material";
 // Main Component
 const createDOMPurify = require("dompurify");
@@ -106,52 +112,52 @@ export class Welcome extends React.Component {
                     sx={{ display: "flex", justifyContent: "space-between" }}
                   >
                     <Container sx={{ textAlign: "start" }}>
-                      <Typography
-                        sx={{ fontSize: 14 }}
-                        color="text.secondary"
-                        gutterBottom
-                      >
-                        Project Role
-                      </Typography>
-                      <Typography gutterBottom variant="h6" component="div">
-                        {project.admins.indexOf(this.activeUser.id) > -1
-                          ? "Project-Admin"
-                          : "Project-Member"}
-                      </Typography>
+                      <Tooltip title="Role" placement="left-start">
+                        <Typography gutterBottom variant="h6" component="div">
+                          {project.admins.indexOf(this.activeUser.id) > -1
+                            ? "Project-Admin"
+                            : "Project-Member"}
+                        </Typography>
+                      </Tooltip>
                     </Container>
                     <Container sx={{ textAlign: "end" }}>
-                      <Typography
-                        sx={{ fontSize: 14 }}
-                        color="text.secondary"
-                        gutterBottom
-                      >
-                        Project Title
-                      </Typography>
-                      <Typography gutterBottom variant="h5" component="div">
-                        {project.title}
-                      </Typography>
+                      <Tooltip title="Title" placement="right-start">
+                        <Typography gutterBottom variant="h5" component="div">
+                          {project.title}
+                        </Typography>
+                      </Tooltip>
                     </Container>
                   </CardContent>
 
                   <CardContent>
                     <Container>
-                      <Typography
-                        sx={{ fontSize: 14 }}
-                        color="text.secondary"
-                        gutterBottom
-                      >
-                        Project Description
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        paragraph
-                        dangerouslySetInnerHTML={{
-                          __html: DOMPurify.sanitize(project["descp"]),
-                        }}
-                      />
+                      <Accordion>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="panel1a-content"
+                          id="panel1a-header"
+                        >
+                          <Typography
+                            sx={{ fontSize: 14 }}
+                            color="text.secondary"
+                            gutterBottom
+                          >
+                            Project Description
+                          </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <Typography
+                            variant="body2"
+                            paragraph
+                            dangerouslySetInnerHTML={{
+                              __html: DOMPurify.sanitize(project["descp"]),
+                            }}
+                          />
+                        </AccordionDetails>
+                      </Accordion>
                     </Container>
                   </CardContent>
-                  <CardActions>
+                  <CardContent>
                     <Container
                       sx={{ display: "flex", justifyContent: "space-between" }}
                     >
@@ -170,7 +176,7 @@ export class Welcome extends React.Component {
                         Detail
                       </Button>
                     </Container>
-                  </CardActions>
+                  </CardContent>
                 </Card>
               ))}
             </Container>

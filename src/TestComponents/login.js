@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { Link, Redirect } from "react-router-dom";
 import axios from "axios";
-
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
 export class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -25,6 +26,14 @@ export class Login extends React.Component {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
+      height: "100%",
+    };
+    const formStyle = {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      maxHeight: "100%",
+      width: "50%",
     };
     const submit = async (e) => {
       console.log("submit is getting called");
@@ -68,30 +77,50 @@ export class Login extends React.Component {
     return (
       <div style={style}>
         <h2>Login to Trello</h2>
-        <form onSubmit={submit} style={style}>
-          <label htmlFor="username">Username:</label>
-          <input
+        <form onSubmit={submit} style={formStyle}>
+          <TextField
             type="text"
             name="username"
-            id="username"
+            id="fullWidth"
             onChange={(e) => {
               this.setState({ username: e.target.value });
             }}
+            label={"Username"}
             value={this.state.username}
+            fullWidth
+            style={{ marginBottom: "10px" }}
           />
-          <label htmlFor="passwd">Password:</label>
-          <input
+          <TextField
             type="password"
             name="passwd"
-            id="passwd"
+            id="fullWidth"
             onChange={(e) => {
               this.setState({ password: e.target.value });
             }}
             value={this.state.password}
+            label={"Password"}
+            fullWidth
+            style={{ marginBottom: "10px" }}
           />
-          <button type="submit">Log In</button>
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "space-between",
+            }}
+          >
+            <Button type="submit" variant="contained">
+              Log In
+            </Button>
+            <Button
+              onClick={this.redirect}
+              variant="contained"
+              color="secondary"
+            >
+              Sign In with Omniport
+            </Button>
+          </div>
         </form>
-        <Link onClick={this.redirect}>Authorize</Link>
       </div>
     );
   }

@@ -1,33 +1,17 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Redirect } from "react-router";
 import CreateList from "./CreateList";
 import Button from "@mui/material/Button";
-import { ButtonGroup } from "@mui/material";
 import axios from "axios";
 import { MyList } from "./list";
 import { Grid } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { Typography, Container } from "@mui/material";
 import { withStyles } from "@mui/styles";
-import IconButton from "@mui/material/IconButton";
-import PeopleIcon from "@mui/icons-material/People";
-import Switch from "@mui/material/Switch";
 import CreateProject from "./CreateProject";
-import Stack from "@mui/material/Stack";
-import {
-  DialogTitle,
-  DialogActions,
-  Dialog,
-  DialogContent,
-  DialogContentText,
-} from "@mui/material/";
+import { DialogTitle, Dialog, DialogContent } from "@mui/material/";
 import MakeAdmin from "./MakeAdmin";
-
-const createDOMPurify = require("dompurify");
-
-const DOMPurify = createDOMPurify(window);
-// Main Component
-//
+import PeopleIcon from "@mui/icons-material/People";
 const styles = (theme) => ({
   btn: {
     "&.MuiButtonBase-root.MuiButton-root": {
@@ -82,7 +66,10 @@ class ListProject extends React.Component {
         { withCredentials: true }
       )
       .then((response) => {
-        console.log("I got a response");
+        console.log(
+          "I got a response of project in listproject: ",
+          response.data
+        );
         this.setState({ projectContent: response.data });
       })
       .catch((error) => {
@@ -98,74 +85,67 @@ class ListProject extends React.Component {
       if (this.state.projectContent) {
         return (
           <React.Fragment>
-            <Container className={classes.container}>
-              <Container
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  margin: "1% 0",
+            <Container
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                margin: "1% 0",
+              }}
+            >
+              <Typography variant="h5" component="h5">
+                {this.state.projectContent.title}
+              </Typography>
+              <CreateList
+                {...this.props}
+                project={this.state.projectContent}
+                renderLists={this.renderLists}
+              ></CreateList>
+            </Container>
+            <Grid container spacing={2}>
+              {this.state.projectContent["project_lists"].map((list) => {
+                return (
+                  <Grid item xs={6} md={4} key={list.id}>
+                    <MyList
+                      {...this.props}
+                      list={list}
+                      project={this.state.projectContent}
+                      renderLists={this.renderLists}
+                    />
+                  </Grid>
+                );
+              })}
+            </Grid>
+            <div className={classes.btnGrp}>
+              <Button
+                color="primary"
+                variant="contained"
+                className={classes.btn}
+                onClick={() => {
+                  this.setState({ editProject: true });
+                }}
+                disabled={
+                  !this.props.isDiffUser
+                    ? this.state.projectContent.admins.indexOf(
+                        this.props.user.id
+                      ) === -1
+                    : true
+                }
+              >
+                <EditIcon />
+              </Button>
+              <Button
+                color="secondary"
+                variant="contained"
+                className={classes.btn}
+                onClick={(e) => {
+                  this.setState({ editAdmin: true });
                 }}
               >
-                <Typography variant="h5" component="h5">
-                  {this.state.projectContent.title}
-                </Typography>
-                <CreateList
-                  {...this.props}
-                  project={this.state.projectContent}
-                  renderLists={this.renderLists}
-                ></CreateList>
-              </Container>
-              {/* <div>
-							<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(this.state.projectContent['descp']) }}></div>
-							<Switch defaultChecked />
-						</div> */}
+                <PeopleIcon />
+              </Button>
+            </div>
 
-              <Grid container spacing={2}>
-                {this.state.projectContent["project_lists"].map((list) => {
-                  return (
-                    <Grid item xs={6} md={4}>
-                      <MyList
-                        {...this.props}
-                        list={list}
-                        project={this.state.projectContent}
-                        key={list.id}
-                        renderLists={this.renderLists}
-                      />
-                    </Grid>
-                  );
-                })}
-              </Grid>
-              <div className={classes.btnGrp}>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  className={classes.btn}
-                  onClick={() => {
-                    this.setState({ editProject: true });
-                  }}
-                  disabled={
-                    !this.props.isDiffUser
-                      ? this.state.projectContent.admins.indexOf(
-                          this.props.user.id
-                        ) === -1
-                      : true
-                  }
-                >
-                  <EditIcon />
-                </Button>
-                <Button
-                  color="secondary"
-                  variant="contained"
-                  className={classes.btn}
-                  onClick={(e) => {
-                    this.setState({ editAdmin: true });
-                  }}
-                >
-                  <PeopleIcon />
-                </Button>
-              </div>
-            </Container>
             <Dialog
               onClose={this.handleCloseProjectEdit}
               open={this.state.editProject}
@@ -200,6 +180,11 @@ class ListProject extends React.Component {
               </DialogContent>
             </Dialog>
           </React.Fragment>
+          // <React.Fragment>
+          // <Container className={classes.container}>
+          //
+          //
+          // </React.Fragment>
         );
       } else {
         return <p>Loading Lists...</p>;

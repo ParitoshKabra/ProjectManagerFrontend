@@ -22,47 +22,6 @@ import MyCard from "./TestComponents/Card.js";
 import AssignedCards from "./TestComponents/AssignedCards";
 import Members from "./TestComponents/Members";
 
-const theme = createTheme({
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        body: {
-          scrollbarColor: "#6b6b6b #2b2b2b",
-          "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
-            background: "transparent",
-          },
-          "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
-            backgroundColor: "#6b6b6b",
-            borderRadius: 8,
-            maxWidth: 10,
-            minHeight: 24,
-          },
-          "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus":
-            {
-              backgroundColor: "#959595",
-            },
-          "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active":
-            {
-              backgroundColor: "#959595",
-            },
-          "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover":
-            {
-              backgroundColor: "#959595",
-            },
-          "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
-            backgroundColor: "#2b2b2b",
-          },
-        },
-      },
-    },
-  },
-  palette: {
-    primary: {
-      main: "#4def5a",
-    },
-  },
-});
-
 const axiosInstance = axios.create({
   baseURL: "http://127.0.0.1:8000/trelloAPIs/",
   timeout: 5000,
@@ -141,250 +100,249 @@ export default class App extends React.Component {
   //once the user is logged in sidebar should be there with every component
   render() {
     return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Router>
-          <Grid container spacing={1} height={"100vh"}>
-            <Grid item sm={3} sx={{ maxHeight: "100%", height: "100%" }}>
+      // <ThemeProvider theme={theme}>
+      <Router>
+        <Grid container spacing={1} height={"100vh"}>
+          <Grid item sm={3} sx={{ maxHeight: "100%", height: "100%" }}>
+            <Route
+              path="/"
+              render={(props) => {
+                return this.state.loggedin ? (
+                  <Sidebar
+                    {...props}
+                    user={this.state.user}
+                    getUser={this.getUser}
+                    isDiffUser={this.state.isDiffUser}
+                    diffUser={this.state.diffUser}
+                    otherUserView={this.otherUserView}
+                    checkLoginStatus={this.checkLoginStatus}
+                  />
+                ) : (
+                  <React.Fragment />
+                );
+              }}
+            />
+          </Grid>
+          <Grid
+            item
+            sm={9}
+            sx={{
+              maxHeight: "100%",
+              height: "100%",
+              overflowX: "hidden",
+              overflowY: "scroll",
+              position: "relative !important",
+            }}
+          >
+            <Switch>
               <Route
+                exact
                 path="/"
                 render={(props) => {
-                  return this.state.loggedin ? (
-                    <Sidebar
+                  return (
+                    <Login
                       {...props}
+                      loginStatus={this.state.loggedin}
+                      checkLoginStatus={this.checkLoginStatus}
+                      user={this.state.user}
+                      getUser={this.getUser}
+                    />
+                  );
+                }}
+              />
+              <Route
+                exact
+                path={["(/dashboard|/dashboard/user/[0-9]+/?)"]}
+                render={(props) => {
+                  return (
+                    <Welcome
+                      {...props}
+                      loginStatus={this.state.loggedin}
+                      checkLoginStatus={this.checkLoginStatus}
                       user={this.state.user}
                       getUser={this.getUser}
                       isDiffUser={this.state.isDiffUser}
                       diffUser={this.state.diffUser}
                       otherUserView={this.otherUserView}
-                      checkLoginStatus={this.checkLoginStatus}
                     />
-                  ) : (
-                    <React.Fragment />
                   );
                 }}
               />
-            </Grid>
-            <Grid
-              item
-              sm={9}
-              sx={{
-                maxHeight: "100%",
-                height: "100%",
-                overflowX: "hidden",
-                overflowY: "scroll",
-                position: "relative !important",
-              }}
-            >
-              <Switch>
-                <Route
-                  exact
-                  path="/"
-                  render={(props) => {
-                    return (
-                      <Login
-                        {...props}
-                        loginStatus={this.state.loggedin}
-                        checkLoginStatus={this.checkLoginStatus}
-                        user={this.state.user}
-                        getUser={this.getUser}
-                      />
-                    );
-                  }}
-                />
-                <Route
-                  exact
-                  path={["(/dashboard|/dashboard/user/[0-9]+/?)"]}
-                  render={(props) => {
-                    return (
-                      <Welcome
-                        {...props}
-                        loginStatus={this.state.loggedin}
-                        checkLoginStatus={this.checkLoginStatus}
-                        user={this.state.user}
-                        getUser={this.getUser}
-                        isDiffUser={this.state.isDiffUser}
-                        diffUser={this.state.diffUser}
-                        otherUserView={this.otherUserView}
-                      />
-                    );
-                  }}
-                />
-                <Route
-                  exact
-                  path={["(/cards|/cards/user/[0-9]+/?)"]}
-                  render={(props) => {
-                    return (
-                      <AssignedCards
-                        {...props}
-                        loginStatus={this.state.loggedin}
-                        checkLoginStatus={this.checkLoginStatus}
-                        user={this.state.user}
-                        getUser={this.getUser}
-                        isDiffUser={this.state.isDiffUser}
-                        diffUser={this.state.diffUser}
-                        otherUserView={this.otherUserView}
-                      />
-                    );
-                  }}
-                />
-                <Route
-                  exact
-                  path={"/project/:id"}
-                  render={(props) => {
-                    return (
-                      <ListProject
-                        {...props}
-                        loginStatus={this.state.loggedin}
-                        checkLoginStatus={this.checkLoginStatus}
-                        user={this.state.user}
-                        getUser={this.getUser}
-                        done={this.state.done}
-                        axiosInstance={axiosInstance}
-                        isDiffUser={this.state.isDiffUser}
-                        diffUser={this.state.diffUser}
-                        otherUserView={this.otherUserView}
-                      />
-                    );
-                  }}
-                />
-                <Route
-                  exact
-                  path="/project/user/:userId/:id"
-                  render={(props) => {
-                    console.log(props);
-                    return (
-                      <ListProject
-                        {...props}
-                        loginStatus={this.state.loggedin}
-                        checkLoginStatus={this.checkLoginStatus}
-                        user={this.state.user}
-                        getUser={this.getUser}
-                        done={this.state.done}
-                        axiosInstance={axiosInstance}
-                        isDiffUser={this.state.isDiffUser}
-                        diffUser={this.state.diffUser}
-                        otherUserView={this.otherUserView}
-                      />
-                    );
-                  }}
-                />
-                <Route
-                  exact
-                  path="/omniport"
-                  render={(props) => {
-                    return (
-                      <Omniport
-                        {...props}
-                        user={this.state.user}
-                        getUser={this.getUser}
-                      />
-                    );
-                  }}
-                />
-                <Route
-                  exact
-                  path="/createCard/:projectid/:id"
-                  render={(props) => {
-                    return (
-                      <CreateCard
-                        {...props}
-                        user={this.state.user}
-                        axiosInstance={axiosInstance}
-                        loginStatus={this.state.loggedin}
-                        getUser={this.getUser}
-                        edit={false}
-                        done={this.state.done}
-                        isDiffUser={this.state.isDiffUser}
-                        diffUser={this.state.diffUser}
-                        otherUserView={this.otherUserView}
-                      />
-                    );
-                  }}
-                />
-                <Route
-                  exact
-                  path="/createProject"
-                  render={(props) => {
-                    return (
-                      <CreateProject
-                        {...props}
-                        user={this.state.user}
-                        axiosInstance={axiosInstance}
-                        loginStatus={this.state.loggedin}
-                        getUser={this.getUser}
-                        done={this.state.done}
-                        edit={false}
-                        project={undefined}
-                        isDiffUser={this.state.isDiffUser}
-                        diffUser={this.state.diffUser}
-                        otherUserView={this.otherUserView}
-                      />
-                    );
-                  }}
-                />
-                <Route
-                  exact
-                  path={"/project/:projectId/:cardId"}
-                  render={(props) => {
-                    return (
-                      <MyCard
-                        {...props}
-                        user={this.state.user}
-                        axiosInstance={axiosInstance}
-                        loginStatus={this.state.loggedin}
-                        getUser={this.getUser}
-                        done={this.state.done}
-                        isDiffUser={this.state.isDiffUser}
-                        diffUser={this.state.diffUser}
-                        otherUserView={this.otherUserView}
-                      />
-                    );
-                  }}
-                />
-                <Route
-                  exact
-                  path={"/project/user/:userId/:projectId/:cardId"}
-                  render={(props) => {
-                    return (
-                      <MyCard
-                        {...props}
-                        user={this.state.user}
-                        axiosInstance={axiosInstance}
-                        loginStatus={this.state.loggedin}
-                        getUser={this.getUser}
-                        done={this.state.done}
-                        isDiffUser={this.state.isDiffUser}
-                        diffUser={this.state.diffUser}
-                        otherUserView={this.otherUserView}
-                      />
-                    );
-                  }}
-                />
-                <Route
-                  exact
-                  path="/members"
-                  render={(props) => {
-                    return (
-                      <Members
-                        {...props}
-                        user={this.state.user}
-                        axiosInstance={axiosInstance}
-                        loginStatus={this.state.loggedin}
-                        getUser={this.getUser}
-                        done={this.state.done}
-                        isDiffUser={this.state.isDiffUser}
-                        diffUser={this.state.diffUser}
-                        otherUserView={this.otherUserView}
-                      />
-                    );
-                  }}
-                />
-              </Switch>
-            </Grid>
+              <Route
+                exact
+                path={["(/cards|/cards/user/[0-9]+/?)"]}
+                render={(props) => {
+                  return (
+                    <AssignedCards
+                      {...props}
+                      loginStatus={this.state.loggedin}
+                      checkLoginStatus={this.checkLoginStatus}
+                      user={this.state.user}
+                      getUser={this.getUser}
+                      isDiffUser={this.state.isDiffUser}
+                      diffUser={this.state.diffUser}
+                      otherUserView={this.otherUserView}
+                    />
+                  );
+                }}
+              />
+              <Route
+                exact
+                path={"/project/:id"}
+                render={(props) => {
+                  return (
+                    <ListProject
+                      {...props}
+                      loginStatus={this.state.loggedin}
+                      checkLoginStatus={this.checkLoginStatus}
+                      user={this.state.user}
+                      getUser={this.getUser}
+                      done={this.state.done}
+                      axiosInstance={axiosInstance}
+                      isDiffUser={this.state.isDiffUser}
+                      diffUser={this.state.diffUser}
+                      otherUserView={this.otherUserView}
+                    />
+                  );
+                }}
+              />
+              <Route
+                exact
+                path="/project/user/:userId/:id"
+                render={(props) => {
+                  console.log(props);
+                  return (
+                    <ListProject
+                      {...props}
+                      loginStatus={this.state.loggedin}
+                      checkLoginStatus={this.checkLoginStatus}
+                      user={this.state.user}
+                      getUser={this.getUser}
+                      done={this.state.done}
+                      axiosInstance={axiosInstance}
+                      isDiffUser={this.state.isDiffUser}
+                      diffUser={this.state.diffUser}
+                      otherUserView={this.otherUserView}
+                    />
+                  );
+                }}
+              />
+              <Route
+                exact
+                path="/omniport"
+                render={(props) => {
+                  return (
+                    <Omniport
+                      {...props}
+                      user={this.state.user}
+                      getUser={this.getUser}
+                    />
+                  );
+                }}
+              />
+              <Route
+                exact
+                path="/createCard/:projectid/:id"
+                render={(props) => {
+                  return (
+                    <CreateCard
+                      {...props}
+                      user={this.state.user}
+                      axiosInstance={axiosInstance}
+                      loginStatus={this.state.loggedin}
+                      getUser={this.getUser}
+                      edit={false}
+                      done={this.state.done}
+                      isDiffUser={this.state.isDiffUser}
+                      diffUser={this.state.diffUser}
+                      otherUserView={this.otherUserView}
+                    />
+                  );
+                }}
+              />
+              <Route
+                exact
+                path="/createProject"
+                render={(props) => {
+                  return (
+                    <CreateProject
+                      {...props}
+                      user={this.state.user}
+                      axiosInstance={axiosInstance}
+                      loginStatus={this.state.loggedin}
+                      getUser={this.getUser}
+                      done={this.state.done}
+                      edit={false}
+                      project={undefined}
+                      isDiffUser={this.state.isDiffUser}
+                      diffUser={this.state.diffUser}
+                      otherUserView={this.otherUserView}
+                    />
+                  );
+                }}
+              />
+              <Route
+                exact
+                path={"/project/:projectId/:cardId"}
+                render={(props) => {
+                  return (
+                    <MyCard
+                      {...props}
+                      user={this.state.user}
+                      axiosInstance={axiosInstance}
+                      loginStatus={this.state.loggedin}
+                      getUser={this.getUser}
+                      done={this.state.done}
+                      isDiffUser={this.state.isDiffUser}
+                      diffUser={this.state.diffUser}
+                      otherUserView={this.otherUserView}
+                    />
+                  );
+                }}
+              />
+              <Route
+                exact
+                path={"/project/user/:userId/:projectId/:cardId"}
+                render={(props) => {
+                  return (
+                    <MyCard
+                      {...props}
+                      user={this.state.user}
+                      axiosInstance={axiosInstance}
+                      loginStatus={this.state.loggedin}
+                      getUser={this.getUser}
+                      done={this.state.done}
+                      isDiffUser={this.state.isDiffUser}
+                      diffUser={this.state.diffUser}
+                      otherUserView={this.otherUserView}
+                    />
+                  );
+                }}
+              />
+              <Route
+                exact
+                path="/members"
+                render={(props) => {
+                  return (
+                    <Members
+                      {...props}
+                      user={this.state.user}
+                      axiosInstance={axiosInstance}
+                      loginStatus={this.state.loggedin}
+                      getUser={this.getUser}
+                      done={this.state.done}
+                      isDiffUser={this.state.isDiffUser}
+                      diffUser={this.state.diffUser}
+                      otherUserView={this.otherUserView}
+                    />
+                  );
+                }}
+              />
+            </Switch>
           </Grid>
-        </Router>
-      </ThemeProvider>
+        </Grid>
+      </Router>
+      // </ThemeProvider>
     );
   }
 

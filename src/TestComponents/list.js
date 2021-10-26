@@ -1,18 +1,21 @@
 import axios from "axios";
 import React from "react";
 import { useState, useEffect } from "react";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
-import { makeStyles } from "@material-ui/core";
-import { Typography } from "@material-ui/core";
-import AddCircleIcon from "@material-ui/icons/Add";
+import { makeStyles } from "@mui/styles";
+import Typography from "@mui/material/Typography";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { ButtonGroup } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ListItemText } from "@material-ui/core";
+import { ListItemText } from "@mui/material";
 import { ListItemButton } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
 import Cookies from "js-cookie";
+import ReadMoreIcon from "@mui/icons-material/ReadMore";
 import {
   Dialog,
   DialogTitle,
@@ -28,25 +31,19 @@ const useStyles = makeStyles({
   },
   container: {
     height: "300px",
-    maxHeight: "300px",
     overflow: "auto",
     padding: "15px",
-    borderRadius: "10px",
     alignItems: "center",
     padding: "10px 0",
     background: "linear-gradient(to right, #d9a7c7, #fffcdc)",
   },
   card: {
-    boxShadow: "2px 2px 2px 2px rgba(14,15,18,0.15)",
     padding: "8px 4px",
     width: "100%",
-    borderRadius: "10px",
     paddingLeft: "10px",
     paddingRight: "10px",
     background: "white",
-    "&:hover": {
-      opacity: 0.8,
-    },
+    "&:hover": {},
   },
   buttonGroup: {
     "&.MuiButtonGroup-root": {
@@ -61,7 +58,9 @@ export const MyList = (props) => {
   const [editCard, setEditCard] = useState(false);
   const [cardUnderEdit, setCardUnderEdit] = useState({});
   const [open, setOpen] = useState(false);
-
+  const [shadow, setShadow] = useState(2);
+  const [currCard, setCurrCard] = useState(null);
+  const [overflow, setOverFlow] = useState(false);
   const getList = () => {
     axios
       .get("http://127.0.0.1:8000/trelloAPIs/lists/" + props.list.id, {
@@ -129,56 +128,98 @@ export const MyList = (props) => {
     console.log("Inside handleClose", editCard);
     getList();
   };
+  const isOverflown = (ele) => {
+    console.log(ele);
+    return (
+      ele.scrollHeight > ele.clientHeight || ele.scrollWidth > ele.clientWidth
+    );
+  };
   if (listContent) {
-    console.log(listContent["list_cards"]);
     let cards;
     if (listContent["list_cards"]) {
       cards = listContent.list_cards.map((card) => {
         return (
-          <ListItemButton className={classes.card}>
-            <ListItemText primary={card.title} />
-            <ButtonGroup key={card.id}>
-              <Button
-                variant="outlined"
-                onClick={(e) => {
-                  EditCard(card);
+          <Paper
+            elevation={
+              currCard === null || currCard.id === card.id ? shadow : 2
+            }
+            sx={{ width: "99%" }}
+          >
+            <div>
+              <ListItemButton
+                className={classes.card}
+                key={card.id}
+                onMouseOver={() => {
+                  setShadow(10);
+                  setCurrCard(card);
                 }}
-                color="secondary"
-                startIcon={<EditRoundedIcon />}
-                disabled={
-                  props.isDiffUser ||
-                  (!(card.created_by === props.user.id) &&
-                    props.project.admins.indexOf(props.user.id) === -1)
-                }
-              />
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  ViewCard(card.id);
+                onMouseOut={() => {
+                  setCurrCard(null);
+                  setShadow(2);
                 }}
-                color="secondary"
-                startIcon={<VisibilityIcon />}
-              />
-            </ButtonGroup>
-          </ListItemButton>
+              >
+                <ListItemText primary={card.title} />
+                <ButtonGroup variant="outlined">
+                  <IconButton
+                    variant="outlined"
+                    onClick={(e) => {
+                      EditCard(card);
+                    }}
+                    color="secondary"
+                    disabled={
+                      props.isDiffUser ||
+                      (!(card.created_by === props.user.id) &&
+                        props.project.admins.indexOf(props.user.id) === -1)
+                    }
+                  >
+                    <EditRoundedIcon />
+                  </IconButton>
+                  <IconButton
+                    variant="outlined"
+                    onClick={() => {
+                      ViewCard(card.id);
+                    }}
+                    color="secondary"
+                  >
+                    <VisibilityIcon />
+                  </IconButton>
+                </ButtonGroup>
+              </ListItemButton>
+            </div>
+          </Paper>
         );
       });
     } else {
       cards = "Loading cards...";
     }
+
     return (
-      <Stack spacing={2} className={classes.container} justify={"center"}>
+      <Stack
+        spacing={2}
+        className={classes.container}
+        justify={"center"}
+        onMouseOver={(e) => {
+          setOverFlow(isOverflown(e.currentTarget));
+        }}
+      >
         <Typography variant="h6" gutterBottom align="center">
           {listContent.title}
         </Typography>
-        <Stack spacing={1.2} sx={{ width: "100%" }}>
+        <Stack
+          spacing={1.2}
+          sx={{
+            width: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+            maxHeight: "100%",
+          }}
+        >
           {cards}
         </Stack>
 
         <ButtonGroup className={classes.buttonGroup}>
-          <Button
+          <IconButton
             color="primary"
-            variant="outlined"
             className={classes.btn}
             onClick={() => {
               props.history.push(
@@ -187,10 +228,9 @@ export const MyList = (props) => {
             }}
           >
             <AddCircleIcon />
-          </Button>
-          <Button
+          </IconButton>
+          <IconButton
             color="secondary"
-            variant="contained"
             onClick={() => {
               setOpen(true);
             }}
@@ -201,10 +241,21 @@ export const MyList = (props) => {
             }
           >
             <DeleteIcon />
-          </Button>
+          </IconButton>
+          {overflow ? (
+            <IconButton
+              color="primary"
+              className={classes.btn}
+              onClick={() => {
+                console.log("Will display more items when overflow!!");
+              }}
+            >
+              <ReadMoreIcon />
+            </IconButton>
+          ) : null}
         </ButtonGroup>
         <Dialog onClose={handleClose} open={editCard}>
-          <DialogTitle>Edit Card</DialogTitle>
+          <DialogTitle>Editing Card: {cardUnderEdit.title}</DialogTitle>
           <DialogContent>
             <CreateCard
               {...props}
