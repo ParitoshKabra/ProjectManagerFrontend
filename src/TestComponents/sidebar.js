@@ -23,6 +23,10 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: "10%",
     minHeight: "5%",
   },
+  active: {
+    color: "rgb(25, 118, 210)",
+    backgroundColor: "rgba(0, 0, 0, 0.10)",
+  },
 }));
 const regex = new RegExp("^/(project|createCard)/[0-9]+(/[0-9]+)?$");
 export const Sidebar = (props) => {
@@ -40,6 +44,11 @@ export const Sidebar = (props) => {
         console.log("called refresh!!");
         await getActiveProjectOnRefresh(s[2]);
       }
+    } else if (
+      location.pathname.startsWith("/project/user/") ||
+      location.pathname.startsWith("/project/list/")
+    ) {
+      getActiveProjectOnRefresh(location.pathname.split("/")[4]);
     } else if (location.pathname.startsWith("/dashboard")) {
       console.log("Inside sidebar, setting dashboard");
       setactiveItem({ temp: "Dashboard" });
@@ -79,9 +88,7 @@ export const Sidebar = (props) => {
 
     if (activeItem.hasOwnProperty("temp")) {
       if (activeItem["temp"] === "Dashboard") {
-        console.log("activeUser: ", activeUser);
         const appRole = activeUser.is_staff ? "App-Admin" : "App-User";
-        console.log("app-role: ", appRole);
         setRole(appRole);
       } else {
         setRole(activeItem["temp"]);
@@ -132,12 +139,13 @@ export const Sidebar = (props) => {
       }
     >
       <ListItemButton
-        className={classes.list}
         onClick={() => {
           props.history.push("/dashboard");
           setactiveItem({ temp: "DashBoard" });
         }}
-        className={classes.list}
+        className={`${classes.list} ${
+          role.startsWith("App") ? classes.active : null
+        }`}
       >
         <ListItemText primary="Dashboard" />
       </ListItemButton>
@@ -148,11 +156,18 @@ export const Sidebar = (props) => {
             : props.history.push(`/cards/user/${props.diffUser.id}`);
           setactiveItem({ temp: "Assigned Cards" });
         }}
-        className={classes.list}
+        className={`${classes.list} ${
+          role.startsWith("Assigned Cards") ? classes.active : null
+        }`}
       >
         <ListItemText primary="Assigned Cards" />
       </ListItemButton>
-      <ListItemButton onClick={handleClick} className={classes.list}>
+      <ListItemButton
+        onClick={handleClick}
+        className={`${classes.list} ${
+          role.startsWith("Project") ? classes.active : null
+        }`}
+      >
         <ListItemIcon>
           <AccountTreeIcon />
         </ListItemIcon>
@@ -178,7 +193,9 @@ export const Sidebar = (props) => {
           onClick={() => {
             props.history.push("/createProject");
           }}
-          className={classes.list}
+          className={`${classes.list} ${
+            role.startsWith("New") ? classes.active : null
+          }`}
         >
           <ListItemText primary="Create New Project" />
         </ListItemButton>
@@ -190,7 +207,9 @@ export const Sidebar = (props) => {
           onClick={() => {
             props.history.push("/members");
           }}
-          className={classes.list}
+          className={`${classes.list} ${
+            role.endsWith("Users") ? classes.active : null
+          }`}
         >
           <ListItemText primary="All Users" />
         </ListItemButton>
@@ -202,7 +221,9 @@ export const Sidebar = (props) => {
             await props.otherUserView();
             props.history.push("/dashboard");
           }}
-          className={classes.list}
+          className={`${classes.list} ${
+            role.endsWith("Users") ? classes.active : null
+          }`}
         >
           <ListItemText primary="Your Profile" />
         </ListItemButton>

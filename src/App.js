@@ -6,6 +6,7 @@ import { Omniport } from "./TestComponents/omniport";
 import ListProject from "./TestComponents/listproject";
 import { CreateCard } from "./TestComponents/CreateCard";
 import CreateProject from "./TestComponents/CreateProject";
+import ListCard from "./TestComponents/ListCard";
 import { createTheme, ThemeProvider } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 
@@ -325,6 +326,25 @@ export default class App extends React.Component {
                 render={(props) => {
                   return (
                     <Members
+                      {...props}
+                      user={this.state.user}
+                      axiosInstance={axiosInstance}
+                      loginStatus={this.state.loggedin}
+                      getUser={this.getUser}
+                      done={this.state.done}
+                      isDiffUser={this.state.isDiffUser}
+                      diffUser={this.state.diffUser}
+                      otherUserView={this.otherUserView}
+                    />
+                  );
+                }}
+              />
+              <Route
+                exact
+                path="/project/list/:listId/:id"
+                render={(props) => {
+                  return (
+                    <ListCard
                       {...props}
                       user={this.state.user}
                       axiosInstance={axiosInstance}

@@ -59,7 +59,7 @@ export class Login extends React.Component {
         })
         .then((res1) => {
           this.props.checkLoginStatus();
-          this.props.history.push("/dashboard");
+
           return res1.data;
         })
         .catch((err) => {
@@ -67,6 +67,12 @@ export class Login extends React.Component {
           return err;
         });
       console.log(res);
+
+      if (!res.hasOwnProperty("error")) {
+        this.props.history.push("/dashboard");
+      } else {
+        alert(`Some error occured: ${res["error"]}`);
+      }
     };
     if (this.props.loginStatus) {
       console.log("Came inside login,", window.location.href);
@@ -81,7 +87,7 @@ export class Login extends React.Component {
           <TextField
             type="text"
             name="username"
-            id="fullWidth"
+            id="fullWidth1"
             onChange={(e) => {
               this.setState({ username: e.target.value });
             }}
@@ -93,7 +99,7 @@ export class Login extends React.Component {
           <TextField
             type="password"
             name="passwd"
-            id="fullWidth"
+            id="fullWidth2"
             onChange={(e) => {
               this.setState({ password: e.target.value });
             }}

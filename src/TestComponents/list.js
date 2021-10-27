@@ -22,7 +22,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-} from "@material-ui/core";
+} from "@mui/material";
 import { CreateCard } from "./CreateCard";
 const useStyles = makeStyles({
   btn: {
@@ -31,8 +31,8 @@ const useStyles = makeStyles({
   },
   container: {
     height: "300px",
-    overflow: "auto",
     padding: "15px",
+    maxHeight: "100%",
     alignItems: "center",
     padding: "10px 0",
     background: "linear-gradient(to right, #d9a7c7, #fffcdc)",
@@ -58,7 +58,7 @@ export const MyList = (props) => {
   const [editCard, setEditCard] = useState(false);
   const [cardUnderEdit, setCardUnderEdit] = useState({});
   const [open, setOpen] = useState(false);
-  const [shadow, setShadow] = useState(2);
+  const [shadow, setShadow] = useState(0);
   const [currCard, setCurrCard] = useState(null);
   const [overflow, setOverFlow] = useState(false);
   const getList = () => {
@@ -130,6 +130,7 @@ export const MyList = (props) => {
   };
   const isOverflown = (ele) => {
     console.log(ele);
+    ele = ele.childNodes[1];
     return (
       ele.scrollHeight > ele.clientHeight || ele.scrollWidth > ele.clientWidth
     );
@@ -141,9 +142,9 @@ export const MyList = (props) => {
         return (
           <Paper
             elevation={
-              currCard === null || currCard.id === card.id ? shadow : 2
+              currCard === null || currCard.id === card.id ? shadow : 0
             }
-            sx={{ width: "99%" }}
+            sx={{ width: "99%", marginLeft: "auto", marginRight: "auto" }}
           >
             <div>
               <ListItemButton
@@ -155,7 +156,7 @@ export const MyList = (props) => {
                 }}
                 onMouseOut={() => {
                   setCurrCard(null);
-                  setShadow(2);
+                  setShadow(0);
                 }}
               >
                 <ListItemText primary={card.title} />
@@ -197,7 +198,6 @@ export const MyList = (props) => {
       <Stack
         spacing={2}
         className={classes.container}
-        justify={"center"}
         onMouseOver={(e) => {
           setOverFlow(isOverflown(e.currentTarget));
         }}
@@ -209,9 +209,10 @@ export const MyList = (props) => {
           spacing={1.2}
           sx={{
             width: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-            maxHeight: "100%",
+            alignItems: "flex-start",
+            justifyContent: "flex-start",
+            height: "80%",
+            overflow: "auto",
           }}
         >
           {cards}
@@ -247,7 +248,9 @@ export const MyList = (props) => {
               color="primary"
               className={classes.btn}
               onClick={() => {
-                console.log("Will display more items when overflow!!");
+                props.history.push(
+                  `/project/list/${listContent.id}/${listContent.lists_project}`
+                );
               }}
             >
               <ReadMoreIcon />

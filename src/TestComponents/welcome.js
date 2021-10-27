@@ -8,6 +8,8 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Avatar from "@mui/material/Avatar";
 import { deepOrange, deepPurple } from "@mui/material/colors";
+import Chip from "@mui/material/Chip";
+
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
@@ -102,83 +104,136 @@ export class Welcome extends React.Component {
                   My Projects
                 </Typography>
               </Container>
-              {this.activeUser.projects_of_user.map((project) => (
-                <Card
-                  sx={{ margin: "10px", zIndex: "100" }}
-                  variant="outlined"
-                  key={project.id}
-                >
-                  <CardContent
-                    sx={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <Container sx={{ textAlign: "start" }}>
-                      <Tooltip title="Role" placement="left-start">
-                        <Typography gutterBottom variant="h6" component="div">
-                          {project.admins.indexOf(this.activeUser.id) > -1
-                            ? "Project-Admin"
-                            : "Project-Member"}
-                        </Typography>
-                      </Tooltip>
-                    </Container>
-                    <Container sx={{ textAlign: "end" }}>
-                      <Tooltip title="Title" placement="right-start">
-                        <Typography gutterBottom variant="h5" component="div">
-                          {project.title}
-                        </Typography>
-                      </Tooltip>
-                    </Container>
-                  </CardContent>
-
-                  <CardContent>
-                    <Container>
-                      <Accordion>
-                        <AccordionSummary
-                          expandIcon={<ExpandMoreIcon />}
-                          aria-controls="panel1a-content"
-                          id="panel1a-header"
+              {this.activeUser.projects_of_user.map((project) => {
+                const members = project["members"].map((mem) => {
+                  return (
+                    <Chip
+                      avatar={
+                        <Avatar
+                          sx={{ bgcolor: deepOrange[500], color: "white" }}
                         >
-                          <Typography
-                            sx={{ fontSize: 14 }}
-                            color="text.secondary"
-                            gutterBottom
-                          >
-                            Project Description
-                          </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <Typography
-                            variant="body2"
-                            paragraph
-                            dangerouslySetInnerHTML={{
-                              __html: DOMPurify.sanitize(project["descp"]),
-                            }}
-                          />
-                        </AccordionDetails>
-                      </Accordion>
-                    </Container>
-                  </CardContent>
-                  <CardContent>
-                    <Container
+                          {mem.username.toUpperCase()[0]}
+                        </Avatar>
+                      }
+                      label={mem.username}
+                      variant="outlined"
+                    />
+                  );
+                });
+                const admins = project["admins"].map((mem) => {
+                  return (
+                    <Chip
+                      avatar={
+                        <Avatar
+                          sx={{ bgcolor: deepPurple[500], color: "white" }}
+                        >
+                          {mem.username.toUpperCase()[0]}
+                        </Avatar>
+                      }
+                      label={mem.username}
+                      variant="outlined"
+                    />
+                  );
+                });
+                return (
+                  <Card
+                    sx={{ margin: "10px", zIndex: "100" }}
+                    variant="outlined"
+                    key={project.id}
+                  >
+                    <CardContent
                       sx={{ display: "flex", justifyContent: "space-between" }}
                     >
-                      <Button
-                        size="small"
-                        variant="contained"
-                        style={{ backgroundColor: "#ff0d51", color: "white" }}
-                        onClick={() => {
-                          !this.props.isDiffUser
-                            ? this.props.history.push(`/project/${project.id}`)
-                            : this.props.history.push(
-                                `/project/user/${this.props.diffUser.id}/${project.id}`
-                              );
+                      <Container sx={{ textAlign: "start" }}>
+                        <Tooltip title="Role" placement="left-start">
+                          <Typography gutterBottom variant="h6" component="div">
+                            {project.admins.indexOf(this.activeUser.id) > -1
+                              ? "Project-Admin"
+                              : "Project-Member"}
+                          </Typography>
+                        </Tooltip>
+                      </Container>
+                      <Container sx={{ textAlign: "end" }}>
+                        <Tooltip title="Title" placement="right-start">
+                          <Typography gutterBottom variant="h5" component="div">
+                            {project.title}
+                          </Typography>
+                        </Tooltip>
+                      </Container>
+                    </CardContent>
+
+                    <CardContent>
+                      <Container>
+                        <Accordion>
+                          <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                          >
+                            <Typography
+                              sx={{ fontSize: 14 }}
+                              color="text.secondary"
+                              gutterBottom
+                            >
+                              Project Description
+                            </Typography>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <Typography
+                              variant="body2"
+                              paragraph
+                              dangerouslySetInnerHTML={{
+                                __html: DOMPurify.sanitize(project["descp"]),
+                              }}
+                            />
+                          </AccordionDetails>
+                        </Accordion>
+                      </Container>
+                    </CardContent>
+                    <CardContent>
+                      <Container>
+                        <Typography color="text.secondary" gutterBottom>
+                          Members
+                        </Typography>
+                        {members}
+                      </Container>
+                    </CardContent>
+                    <CardContent>
+                      <Container>
+                        <Typography color="text.secondary" gutterBottom>
+                          Admins
+                        </Typography>
+                        {admins}
+                      </Container>
+                    </CardContent>
+                    <CardContent>
+                      <Container
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
                         }}
                       >
-                        Detail
-                      </Button>
-                    </Container>
-                  </CardContent>
-                </Card>
-              ))}
+                        <Button
+                          size="small"
+                          variant="contained"
+                          style={{ backgroundColor: "#ff0d51", color: "white" }}
+                          onClick={() => {
+                            !this.props.isDiffUser
+                              ? this.props.history.push(
+                                  `/project/${project.id}`
+                                )
+                              : this.props.history.push(
+                                  `/project/user/${this.props.diffUser.id}/${project.id}`
+                                );
+                          }}
+                        >
+                          Detail
+                        </Button>
+                      </Container>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </Container>
           </Container>
         );
