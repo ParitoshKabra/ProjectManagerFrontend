@@ -53,6 +53,7 @@ export const CreateCard = (props) => {
   const [alertMsg, setAlertMsg] = useState("");
   const [alert1, setAlert] = useState(false);
   const [descp, setDescp] = useState("none");
+  const [completed, setCompleted] = useState(false);
   const [datetime, setDateTime] = useState(
     moment(new Date()).add(5, "days").format("YYYY-MM-DDTHH:mm")
   );
@@ -69,6 +70,7 @@ export const CreateCard = (props) => {
     if (props.edit) {
       console.log(props.card);
       setTitle(props.card["title"]);
+      setCompleted(props.card["completed"]);
       setDescp(props.card["descp"]);
       setAssigned_to(props.card["assigned_to"]);
       let date_ = moment(props.card["due_date"]).format("YYYY-MM-DDTHH:mm");
@@ -213,6 +215,8 @@ export const CreateCard = (props) => {
         title: title,
         descp: descp,
         due_date: datetime,
+        completed: completed,
+        completed_time: new Date(),
       };
       console.log("came here before getting csrftoken");
       csrftoken = await axios
@@ -367,6 +371,19 @@ export const CreateCard = (props) => {
             />
           )}
         />
+        <div>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={completed}
+            disabled={!props.edit}
+            onChange={(e) => {
+              setCompleted(!completed);
+            }}
+          />
+          {"completed?"}
+        </div>
         <ButtonGroup>
           <Button
             variant="contained"

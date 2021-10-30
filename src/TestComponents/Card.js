@@ -463,7 +463,13 @@ function MyCard(props) {
     }
     let boolDisplay = expanded ? "block" : "none";
     return (
-      <Card>
+      <Card
+        style={{
+          borderBottom: card.completed
+            ? "8px solid #84f5c2"
+            : `8px solid ${red[500]}`,
+        }}
+      >
         <CardContent sx={{ display: "flex", justifyContent: "space-between" }}>
           <Stack>
             <Tooltip title="title" placement="left-start">
@@ -499,9 +505,14 @@ function MyCard(props) {
           ></Typography>
         </CardContent>
         <CardContent>
-          <Typography paragraph style={{ color: "red" }}>
-            Due by:{" "}
-            <Moment format="MMMM Do YYYY, h:mm a">{card.due_date}</Moment>
+          <Typography
+            paragraph
+            style={{ color: card.completed ? "green" : "red" }}
+          >
+            {card.completed ? "Done on: " : "Due by: "}
+            <Moment format="MMMM Do YYYY, h:mm a">
+              {card.completed ? card.completed_time : card.due_date}
+            </Moment>
           </Typography>
         </CardContent>
         <Grow in={expanded}>

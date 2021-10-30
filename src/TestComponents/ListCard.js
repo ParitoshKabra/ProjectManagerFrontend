@@ -103,7 +103,14 @@ function ListCard(props) {
         list["list_cards"].map((card, index) => {
           return (
             <Grid item key={index} sm={4} xs={12}>
-              <Paper elevation={3}>
+              <Paper
+                elevation={3}
+                style={{
+                  borderBottom: card.completed
+                    ? "8px solid #84f5c2"
+                    : "8px solid red",
+                }}
+              >
                 <List>
                   <ListItem>
                     <Tooltip title="title" placement="top">
@@ -145,10 +152,21 @@ function ListCard(props) {
                       alignItems: "flex-start",
                     }}
                   >
-                    <Typography component="div">Due by:</Typography>
-                    <Typography component="div" style={{ color: "red" }}>
+                    <Typography
+                      component="div"
+                      style={{
+                        color: card.completed ? "green" : "red",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {card.completed ? "Finished on: " : "Due by: "}
+                    </Typography>
+                    <Typography
+                      component="div"
+                      style={{ color: card.completed ? "green" : "red" }}
+                    >
                       <Moment format="MMMM Do YYYY, h:mm a">
-                        {card.due_date}
+                        {card.completed ? card.completed_time : card.due_date}
                       </Moment>
                     </Typography>
                   </ListItem>
